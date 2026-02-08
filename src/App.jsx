@@ -1,29 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { ThemeProvider } from '@mui/material/styles';
-import theme from './theme';
-import CssBaseline from '@mui/material/CssBaseline';
-import AppGlobalStyles from './GlobalStyles';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+import Login from './login';
+import Signup from './signup';
+import ConsumerDash from './consumerDash';
+import HostDash from './hostDash';
+import VolunteerDash from './volunteerDash';
 
 function App() {
-
   return (
-    <ThemeProvider theme={theme}>
-      {/* CssBaseline kickstarts an elegant, consistent, and simple baseline to build upon */}
-      <CssBaseline />
-      
-      {/* Custom global styles */}
-      <AppGlobalStyles />
-      
-      {/* Your app content goes here */}
-      <div>
-        <h1>Your App</h1>
-        {/* Add your routes, pages, components, etc. */}
-      </div>
-    </ThemeProvider>
+    <Router>
+      <Routes>
+        {/* Login route */}
+        <Route path="/login" element={<Login />} />
+        
+        {/* Signup route */}
+        <Route path="/signup" element={<Signup />} />
+        
+        {/* Default route - redirect to login */}
+        <Route path="/" element={<Navigate to="/login" />} />
+        
+        {/* Catch all - redirect to login */}
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+    </Router>
   );
 }
 
-export default App
+export default App;
