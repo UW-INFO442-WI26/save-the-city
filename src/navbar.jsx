@@ -5,7 +5,7 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top w-100">
       <div className="container-fluid">
-        <NavLink className="navbar-brand text-success" to="/">Save the City</NavLink>
+        <NavLink className="navbar-brand brand text-success bungee-regular" to="/">Save the City</NavLink>
 
         <button
           className="navbar-toggler"
