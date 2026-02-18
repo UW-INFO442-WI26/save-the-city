@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import HostLocationPicker from './hostLocationPicker';
 
 export default function HostDash() {
   const [showMap, setShowMap] = useState(false);
@@ -12,8 +13,13 @@ export default function HostDash() {
 
       {showMap && (
         <div className="map-overlay">
-          {/* Placeholder for the map component */}
-          <button onClick={() => setShowMap(false)} className="btn btn-danger close-btn">Cancel</button>
+          <HostLocationPicker
+            onConfirm={(location) => {
+              console.log('Location confirmed:', location);
+              setShowMap(false);
+            }}
+            onCancel={() => setShowMap(false)}
+          />
         </div>
       )}
     </div>
