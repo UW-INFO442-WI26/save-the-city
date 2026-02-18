@@ -3,9 +3,10 @@ import { NavLink } from 'react-router-dom';
 
 export default function Navbar() {
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top w-100">
+    <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top w-100 py-3">
       <div className="container-fluid">
-        <NavLink className="navbar-brand brand text-success bungee-regular" to="/">Save the City</NavLink>
+           <NavLink className="navbar-brand brand text-success bungee-regular" to="/">Save the City</NavLink>
+       
 
         <button
           className="navbar-toggler"
@@ -22,11 +23,11 @@ export default function Navbar() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <NavLink className="nav-link active" aria-current="page" to="/user">User Portal</NavLink>
+              <NavLink className="nav-link brand active" aria-current="page" to="/user">User Portal</NavLink>
             </li>
 
             <li className="nav-item">
-              <NavLink className="nav-link" to="/host">Host Portal</NavLink>
+              <NavLink className="nav-link brand active" to="/host">Host Portal</NavLink>
             </li>
 
 
