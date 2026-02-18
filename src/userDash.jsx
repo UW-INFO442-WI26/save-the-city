@@ -1,7 +1,7 @@
 import React from 'react';
 import MapWindow from './mapWindow';
 
-export default function VolunteerDash() {
+export default function UserDash() {
   return (
     <div>
       <MapWindow />

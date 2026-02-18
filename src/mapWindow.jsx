@@ -11,8 +11,8 @@ L.Icon.Default.mergeOptions({
 export default function MapWindow() {
   return (
     <MapContainer
-      center={[47.6206, -122.3493]} // Seattle Center coordinates
-      zoom={13}
+      center={[47.6061, -122.3328]} // Seattle Center coordinates
+      zoom={10}
       className="map-container">
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
     </MapContainer>
