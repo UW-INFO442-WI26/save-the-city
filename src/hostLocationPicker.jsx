@@ -26,7 +26,9 @@ export default function HostLocationPicker({ onConfirm, onCancel }) {
                 center={[47.6061, -122.3328]} // Seattle Center coordinates
                 zoom={10}
                 className="map-overlay-map">
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
                 <PinDrop onPin={setPinLocation} />
                 {pinLocation && <Marker position={pinLocation} />}
             </MapContainer>
