@@ -52,6 +52,11 @@
 
 /* end navbar rules */
 
+.headertemp {
+  padding: 2rem;
+  text-align: center;
+}
+
 /* Map Rules */
 .map-container {
   height: 60vh;
