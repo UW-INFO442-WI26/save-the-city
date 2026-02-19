@@ -5,6 +5,7 @@ import HostDash from './hostDash';
 import UserDash from './userDash';
 import Home from './home';
 import Navbar from './navbar';
+import Footer from './footer';
 
 function App() {
   return (
@@ -19,6 +20,9 @@ function App() {
 
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
+
+      <Footer />
+
 
     </div>
     
