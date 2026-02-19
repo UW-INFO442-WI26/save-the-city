@@ -159,6 +159,15 @@ button:focus-visible {
   width: 100%;
 }
 
+.map-picker-controls {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: white;
+  padding-bottom: calc(1rem + 3rem); /* 3rem for footer height */
+  justify-content: center;
+}
+
 /* ============================================
    FOOTER
    ============================================ */
