@@ -4,6 +4,7 @@ import './App.css';
 import HostDash from './hostDash';
 import UserDash from './userDash';
 import Home from './home';
+import AboutUs from './aboutUs';
 import Navbar from './navbar';
 import Footer from './footer';
 
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/home" />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/about" element={<AboutUs />} />
         <Route path="/host" element={<HostDash />} />
         <Route path="/user" element={<UserDash />} />
 

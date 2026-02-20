@@ -128,9 +128,179 @@ button:focus-visible {
   width: 0;
 }
 
+.navbar-brand-wrapper {
+  align-items: center;
+  margin-right: 1.5rem;
+}
+
+.navbar-tagline {
+  line-height: 1.2;
+  margin-top: -2px;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+/* ============================================
+   SEARCH & FILTER BAR (User Portal)
+   ============================================ */
+.search-filter-bar {
+  flex-shrink: 0;
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0.75rem 1rem;
+}
+
+.search-filter-bar__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.search-filter-bar__search {
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-filter-bar__input {
+  max-width: 320px;
+}
+
+.search-filter-bar__event-type {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-filter-bar__label {
+  font-size: 0.9rem;
+  color: #555;
+  white-space: nowrap;
+}
+
+.search-filter-bar__tags.dropdown {
+  position: relative;
+}
+
+.search-filter-bar__tags .dropdown-menu {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.search-filter-bar__tags .dropdown-menu.show {
+  z-index: 1001;
+}
+
+.search-filter-bar__clear {
+  white-space: nowrap;
+}
+
+.search-filter-bar__suggested {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding: 1rem 0.5rem 0.5rem;
+}
+
+.search-filter-bar__suggested-label {
+  font-size: 0.85rem;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.search-filter-bar__suggested-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.search-filter-bar__chip {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  border: 1px solid #28a745;
+  background: #fff;
+  color: #28a745;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.search-filter-bar__chip:hover {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+.search-filter-bar__chip--active {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.search-filter-bar__chip--active:hover {
+  background-color: #218838;
+  color: #fff;
+}
+
+.search-filter-bar__active-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.search-filter-bar__tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.search-filter-bar__tag-remove {
+  background: none;
+  border: none;
+  padding: 0 0.1rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: #2e7d32;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.search-filter-bar__tag-remove:hover {
+  color: #1b5e20;
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.search-filter-bar__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
 /* ============================================
    MAP
    ============================================ */
+.user-dash .map-container-wrapper {
+  flex-shrink: 0;
+  min-height: 50vh;
+  height: 50vh;
+}
+
+.user-dash .map-container,
+.user-dash .leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+
 .leaflet-container {
   height: 60vh;
   width: 100%;
@@ -252,6 +422,48 @@ button:focus-visible {
   color: black;
 }
 
+.column-body {
+  padding: 1rem;
+}
+
+.column-body__intro {
+  font-size: 0.9rem;
+  color: #444;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.user-portal-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.user-portal-card__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.user-portal-card__meta {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.user-portal-card--empty {
+  color: #888;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.accordion-body-padded {
+  padding: 1rem;
+}
+
 /* ============================================
    RESPONSIVE — MOBILE / DESKTOP VISIBILITY
    ============================================ */
@@ -260,4 +472,175 @@ button:focus-visible {
 @media (min-width: 768px) {
   .mobile { display: none; }
   .desktop { display: block; }
+}
+
+/* ============================================
+   HOME / WELCOME PAGE
+   ============================================ */
+.home-page.page-content {
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 3.5rem);
+  padding-top: 5rem;
+}
+
+.home-hero__title {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.home-hero__lead {
+  font-size: 1.15rem;
+  color: #444;
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.home-section__heading {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.home-card {
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.home-card__title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.home-card__text {
+  color: #444;
+  line-height: 1.55;
+  margin-bottom: 1rem;
+}
+
+.home-list {
+  color: #444;
+  line-height: 1.7;
+  max-width: 42rem;
+  padding-left: 1.25rem;
+}
+
+.home-list li {
+  margin-bottom: 0.5rem;
+}
+
+.home-cta__text {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* ============================================
+   HOST PAGE
+   ============================================ */
+.host-page.page-content {
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 3.5rem);
+  padding-top: 5rem;
+}
+
+.host-hero__title {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.host-hero__lead {
+  font-size: 1.1rem;
+  color: #444;
+  line-height: 1.55;
+  max-width: 42rem;
+}
+
+.host-section__heading {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.host-section__intro {
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  max-width: 42rem;
+}
+
+.host-section--danger .host-section__heading {
+  color: #721c24;
+}
+
+.host-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.host-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.host-card__meta {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.host-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.host-card--empty {
+  color: #888;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+/* ============================================
+   ABOUT US PAGE
+   ============================================ */
+.about-us.page-content {
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 3.5rem);
+  padding-top: 1rem;
+}
+
+.about-us__title {
+  font-size: 2.25rem;
+  color: #333;
+}
+
+.about-us__lead {
+  font-size: 1.2rem;
+  max-width: 42rem;
+}
+
+.about-us__heading {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.about-us__body {
+  color: #444;
+  line-height: 1.65;
+  max-width: 42rem;
 }

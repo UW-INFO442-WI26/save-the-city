@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MapContainer, TileLayer, useMapEvents, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import HostGardenForm from './hostGardenForm';
+import { SEATTLE } from './constants';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -35,8 +36,8 @@ export default function HostLocationPicker({ onConfirm, onCancel }) {
     return (
         <div className="map-picker-container" style={{ position: 'relative' }}>
         <MapContainer
-            center={[47.6061, -122.3328]}
-            zoom={10}
+            center={SEATTLE.center}
+            zoom={SEATTLE.zoom}
             className="map-overlay-map"
         >
             <TileLayer

@@ -5,7 +5,10 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top w-100 py-3">
       <div className="container-fluid">
-           <NavLink className="navbar-brand brand text-success bungee-regular" to="/">Save the City</NavLink>
+           <div className="navbar-brand-wrapper d-flex flex-column">
+          <NavLink className="navbar-brand brand text-success bungee-regular p-0 me-0" to="/">Save the City</NavLink>
+          <span className="navbar-tagline text-muted small">Seattle community gardens</span>
+        </div>
        
 
         <button
@@ -23,14 +26,17 @@ export default function Navbar() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <NavLink className="nav-link brand active" aria-current="page" to="/user">User Portal</NavLink>
+              <NavLink className="nav-link brand" to="/home">Home</NavLink>
             </li>
-
             <li className="nav-item">
-              <NavLink className="nav-link brand active" to="/host">Host Portal</NavLink>
+              <NavLink className="nav-link brand" to="/about">About Us</NavLink>
             </li>
-
-
+            <li className="nav-item">
+              <NavLink className="nav-link brand" to="/user">User Portal</NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink className="nav-link brand" to="/host">Host Portal</NavLink>
+            </li>
           </ul>
 
           <form className="d-flex" role="search">

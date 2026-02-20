@@ -1,4 +1,5 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
+import { SEATTLE } from './constants';
 
 const STATES = [
     'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut',
@@ -18,9 +19,9 @@ export default function HostGardenForm({ onSubmit, onCancel }) {
         gardenName: '',
         description: '',
         address: '',
-        city: '',
-        state: '',
-        zip: '',
+        city: SEATTLE.name,
+        state: SEATTLE.state,
+        zip: SEATTLE.defaultZip,
         email: '',
         phone: '',
         socialLinks: [''],
@@ -113,7 +114,7 @@ export default function HostGardenForm({ onSubmit, onCancel }) {
                         className="form-control"
                         value={form.city}
                         onChange={handleChange}
-                        placeholder="Seattle"
+                        placeholder={SEATTLE.name}
                     />
                     </div>
                     <div className="col-3">
@@ -136,7 +137,7 @@ export default function HostGardenForm({ onSubmit, onCancel }) {
                         className="form-control"
                         value={form.zip}
                         onChange={handleChange}
-                        placeholder="98101"
+                        placeholder={SEATTLE.defaultZip}
                     />
                     </div>
                 </div>
