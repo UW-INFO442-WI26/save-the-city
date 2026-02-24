@@ -1,104 +1,236 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import HostLocationPicker from './hostLocationPicker';
 
 export default function HostDash() {
   const [showMap, setShowMap] = useState(false);
+  const [gardens, setGardens] = useState([]);
+  const [query, setQuery] = useState('');
+  const [selectedId, setSelectedId] = useState(null);
+
+  function handleGardenConfirm(newGarden) {
+    const name = newGarden.name || newGarden.gardenName || 'Untitled Garden';
+
+    const address =
+      newGarden.address ||
+      (newGarden.street
+        ? `${newGarden.street}, ${newGarden.city || ''}, ${newGarden.state || ''} ${
+            newGarden.zip || ''
+          }`
+            .replace(/\s+/g, ' ')
+            .trim()
+        : '');
+
+    const tags = newGarden.tags || [];
+
+    const normalized = {
+      ...newGarden,
+      name,
+      address,
+      tags,
+    };
+
+    setGardens((prev) => [...prev, { id: Date.now(), ...normalized }]);
+    setShowMap(false);
+  }
+
+  const filteredGardens = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return gardens;
+
+    return gardens.filter((g) => {
+      const name = (g.name || '').toLowerCase();
+      const address = (g.address || '').toLowerCase();
+      const tags = Array.isArray(g.tags)
+        ? g.tags.join(' ').toLowerCase()
+        : String(g.tags || '').toLowerCase();
+      return name.includes(q) || address.includes(q) || tags.includes(q);
+    });
+  }, [gardens, query]);
+
+  const selectedGarden = gardens.find((g) => g.id === selectedId) || null;
+
+  function handleDeleteSelected() {
+    if (!selectedGarden) return;
+
+    const ok = window.confirm(
+      `Delete "${selectedGarden.name}"?\n\nThis will remove the garden from your dashboard.`
+    );
+    if (!ok) return;
+
+    setGardens((prev) => prev.filter((g) => g.id !== selectedGarden.id));
+    setSelectedId(null);
+  }
 
   return (
     <div className="host-page page-content">
       <div className="container py-4">
-        <section className="host-hero mb-5">
-          <h1 className="host-hero__title">Host Dashboard</h1>
-          <p className="host-hero__lead">
-            Create and manage your community garden, set volunteer and harvest times, and see how your listing looks to volunteers.
-          </p>
-        </section>
-
-        <section className="host-section mb-5">
-          <h2 className="host-section__heading">Create new garden</h2>
-          <p className="host-section__intro">
-            Add your garden to the map so volunteers and neighbors can find it. You will pick a location, then enter the name, address, description, and tags.
-          </p>
-          <button className="btn btn-success" onClick={() => setShowMap(true)}>
-            Register a new garden
-          </button>
-        </section>
-
-        <section className="host-section mb-5">
-          <h2 className="host-section__heading">My gardens</h2>
-          <p className="host-section__intro">
-            Gardens you’ve registered appear here. Click one to edit details, add volunteer or harvest times, or delete it.
-          </p>
-          <div className="host-card host-card--empty">
-            No gardens yet. Register a garden above to get started.
+        {/* Header + Quick actions */}
+        <section className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+          <div>
+            <h1 className="host-hero__title mb-1">Host Dashboard</h1>
+            <p className="host-hero__lead mb-0">Add gardens and manage them in one place.</p>
           </div>
-          <div className="host-card">
-            <div className="host-card__title">Example: Sunrise Community Garden</div>
-            <div className="host-card__meta">123 Green St, Seattle · Vegetables, Herbs</div>
-            <div className="host-card__actions mt-2">
-              <button type="button" className="btn btn-outline-success btn-sm me-2">Edit</button>
-              <button type="button" className="btn btn-outline-secondary btn-sm">Manage times</button>
+
+          <div className="d-flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={() => setShowMap(true)}
+              aria-haspopup="dialog"
+              aria-expanded={showMap ? 'true' : 'false'}
+            >
+              + Register garden
+            </button>
+
+            <Link to="/user" className="btn btn-outline-secondary">
+              View as volunteer
+            </Link>
+          </div>
+        </section>
+
+        {/* Main layout: list + details */}
+        <section className="row g-4">
+          {/* Left: Garden list */}
+          <div className="col-12 col-lg-7">
+            <div className="host-card">
+              <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-2 mb-3">
+                <div>
+                  <h2 className="h5 mb-1">My gardens</h2>
+                  <div className="text-muted small">Select a garden to see actions.</div>
+                </div>
+
+                <div className="w-100 w-md-auto" style={{ maxWidth: 320 }}>
+                  <label htmlFor="gardenSearch" className="form-label small mb-1">
+                    Search
+                  </label>
+                  <input
+                    id="gardenSearch"
+                    className="form-control form-control-sm"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Name, address, or tag…"
+                  />
+                </div>
+              </div>
+
+              {filteredGardens.length === 0 ? (
+                <div className="host-card host-card--empty">
+                  <div className="fw-semibold mb-1">
+                    {gardens.length === 0 ? 'No gardens yet' : 'No matches'}
+                  </div>
+                  <div className="text-muted">
+                    {gardens.length === 0
+                      ? 'Register your first garden to appear here.'
+                      : 'Try a different search term.'}
+                  </div>
+
+                  {gardens.length === 0 && (
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm mt-3"
+                      onClick={() => setShowMap(true)}
+                    >
+                      Register a garden
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="d-grid gap-2">
+                  {filteredGardens.map((g) => {
+                    const isSelected = g.id === selectedId;
+                    const tagText = Array.isArray(g.tags) ? g.tags.join(' · ') : g.tags || '';
+
+                    return (
+                      <button
+                        key={g.id}
+                        type="button"
+                        className={`text-start host-list-item ${
+                          isSelected ? 'host-list-item--active' : ''
+                        }`}
+                        onClick={() => setSelectedId(g.id)}
+                        aria-pressed={isSelected ? 'true' : 'false'}
+                      >
+                        <div className="d-flex justify-content-between align-items-start gap-2">
+                          <div>
+                            <div className="fw-semibold">{g.name}</div>
+                            <div className="text-muted small">
+                              {g.address || 'No address provided'}
+                            </div>
+                            {tagText ? (
+                              <div className="text-muted small mt-1">{tagText}</div>
+                            ) : null}
+                          </div>
+                          <span className="badge text-bg-light border">Garden</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
-        </section>
 
-        <section className="host-section mb-5">
-          <h2 className="host-section__heading">Volunteer times</h2>
-          <p className="host-section__intro">
-            Add work sessions when you need help. Volunteers can sign up from the User Portal. Set the date, time range, and max participants.
-          </p>
-          <button type="button" className="btn btn-outline-success btn-sm mb-3">Add new volunteer time</button>
-          <div className="host-card host-card--empty">
-            No volunteer times yet. Add one above or select a garden first.
-          </div>
-          <div className="host-card">
-            <div className="host-card__title">Sun, Mar 10 · 10:00 AM – 2:00 PM</div>
-            <div className="host-card__meta">Sunrise Community Garden · 5 spots · 2 registered</div>
-          </div>
-        </section>
+          {/* Right: Details panel */}
+          <div className="col-12 col-lg-5">
+            <div className="host-card">
+              <h2 className="h5 mb-1">Selected garden</h2>
+              <div className="text-muted small mb-3">
+                Choose a garden on the left to enable actions.
+              </div>
 
-        <section className="host-section mb-5">
-          <h2 className="host-section__heading">Harvest times</h2>
-          <p className="host-section__intro">
-            Post harvest slots so community members can sign up to help pick or receive produce. Set the date, time range, and max harvesters.
-          </p>
-          <button type="button" className="btn btn-outline-success btn-sm mb-3">Add new harvest time</button>
-          <div className="host-card host-card--empty">
-            No harvest times yet. Add one above or select a garden first.
-          </div>
-          <div className="host-card">
-            <div className="host-card__title">Sat, Mar 8 · 9:00 AM – 12:00 PM</div>
-            <div className="host-card__meta">Sunrise Community Garden · 3 spots · 1 registered</div>
-          </div>
-        </section>
+              {!selectedGarden ? (
+                <div className="host-card host-card--empty">
+                  <div className="fw-semibold mb-1">Nothing selected</div>
+                  <div className="text-muted">Pick a garden to edit details or manage times.</div>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-3">
+                    <div className="fw-semibold">{selectedGarden.name}</div>
+                    <div className="text-muted small">{selectedGarden.address}</div>
+                  </div>
 
-        <section className="host-section mb-5">
-          <h2 className="host-section__heading">View as volunteer</h2>
-          <p className="host-section__intro">
-            See how your garden and times look to volunteers and neighbors on the map.
-          </p>
-          <Link to="/user" className="btn btn-outline-success">Open User Portal (volunteer view)</Link>
-        </section>
+                  <div className="d-flex flex-wrap gap-2">
+                    <button type="button" className="btn btn-outline-success btn-sm">
+                      Edit details
+                    </button>
+                    <button type="button" className="btn btn-outline-secondary btn-sm">
+                      Manage times
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={handleDeleteSelected}
+                    >
+                      Delete
+                    </button>
+                  </div>
 
-        <section className="host-section host-section--danger mb-5">
-          <h2 className="host-section__heading">Delete garden</h2>
-          <p className="host-section__intro">
-            Permanently remove a garden and all its volunteer and harvest times. You’ll be asked to enter your password to confirm.
-          </p>
-          <button type="button" className="btn btn-outline-danger" disabled>Delete garden (select a garden first)</button>
+                  <hr />
+
+                  <div className="text-muted small">
+                    Tip: Keep your description and tags clear so volunteers know what to expect.
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="text-muted small mt-3">
+              Keyboard: use Tab to move through gardens, press Enter to select.
+            </div>
+          </div>
         </section>
       </div>
 
       {showMap && (
-        <div className="map-overlay">
-          <HostLocationPicker
-            onConfirm={(location) => {
-              console.log('Location confirmed:', location);
-              setShowMap(false);
-            }}
-            onCancel={() => setShowMap(false)}
-          />
+        <div
+          className="map-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Register a new garden"
+        >
+          <HostLocationPicker onConfirm={handleGardenConfirm} onCancel={() => setShowMap(false)} />
         </div>
       )}
     </div>

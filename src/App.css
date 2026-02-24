@@ -40,3 +40,41 @@
 .read-the-docs {
   color: #888;
 } */
+
+
+.host-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+}
+
+.host-card--empty {
+  border-style: dashed;
+  background: rgba(25, 135, 84, 0.04);
+}
+
+.host-list-item {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+}
+
+.host-list-item:hover {
+  background: rgba(0,0,0,0.02);
+}
+
+.host-list-item--active {
+  outline: 2px solid rgba(25, 135, 84, 0.35);
+  border-color: rgba(25, 135, 84, 0.35);
+}
+
+.host-hero__title {
+  font-weight: 750;
+}
+
+.host-hero__lead {
+  opacity: 0.8;
+}
