@@ -18,7 +18,7 @@ export default function HostDash() {
         <section className="host-section mb-5">
           <h2 className="host-section__heading">Create new garden</h2>
           <p className="host-section__intro">
-            Add your garden to the map so volunteers and neighbors can find it. You’ll pick a location, then enter the name, address, description, and tags.
+            Add your garden to the map so volunteers and neighbors can find it. You will pick a location, then enter the name, address, description, and tags.
           </p>
           <button className="btn btn-success" onClick={() => setShowMap(true)}>
             Register a new garden
