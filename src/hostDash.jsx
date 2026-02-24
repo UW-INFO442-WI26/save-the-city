@@ -67,7 +67,7 @@ export default function HostDash() {
       <div className="container py-4">
         {/* Header + Quick actions */}
         <section className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
-          <div>
+          <div className="host-hero">
             <h1 className="host-hero__title mb-1">Host Dashboard</h1>
             <p className="host-hero__lead mb-0">Add gardens and manage them in one place.</p>
           </div>
