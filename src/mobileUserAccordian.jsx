@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { database } from './firebase';
+import { ref, onValue } from 'firebase/database';
+
 
 export default function Accordian() {
   return (

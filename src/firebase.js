@@ -9,7 +9,7 @@ import { getDatabase } from "firebase/database";
 const firebaseConfig = {
   apiKey: "AIzaSyAUtXlv_JQgrxcrNFCYLK2FYSFyqb7ANc4",
   authDomain: "save-the-city-906f2.firebaseapp.com",
-  databseURL: "https://save-the-city-906f2-default-rtdb.firebaseio.com/",
+  databaseURL: "https://save-the-city-906f2-default-rtdb.firebaseio.com/",
   projectId: "save-the-city-906f2",
   storageBucket: "save-the-city-906f2.firebasestorage.app",
   messagingSenderId: "754921736073",
