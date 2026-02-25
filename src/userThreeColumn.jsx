@@ -1,24 +1,94 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { database } from './firebase';
+import { ref, onValue } from 'firebase/database';
 
-export default function ThreeColumn() {
+export default function ThreeColumn({ selectedGarden }) {
+  const [gardens, setGardens] = useState([]);
+
+  useEffect(() => {
+    const gardensRef = ref(database, 'gardens');
+    const unsubscribe = onValue(gardensRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setGardens(Object.values(data));
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="three-column-layout">
+
       <div className="column column-light">
         <p className="column-header">Community Garden Info</p>
         <div className="column-body">
           <p className="column-body__intro">
             Click a garden on the map to see details here: address, host contact, produce types, and description.
           </p>
-          <div className="user-portal-card user-portal-card--empty">
-            No garden selected. Use the map or filters above to find a community garden.
-          </div>
-          <div className="user-portal-card">
-            <div className="user-portal-card__title">Example: Sunrise Community Garden</div>
-            <div className="user-portal-card__meta">123 Green St, Seattle · Vegetables, Herbs</div>
-            <p className="mb-0 mt-2 small text-secondary">Sample listing. Real gardens will show address, owner, produce types, and a link to Google Maps.</p>
-          </div>
+
+           {!selectedGarden && (
+            <div className="user-portal-card user-portal-card--empty">
+              No garden selected. Use the map to find a community garden.
+            </div>
+          )}
+
+          {selectedGarden && (
+            <div className="user-portal-card user-portal-card--selected">
+              <div className="user-portal-card__title">{selectedGarden.name}</div>
+              <div className="user-portal-card__meta">
+                {selectedGarden.address} · {selectedGarden.tags?.join(', ')}
+              </div>
+              <div className="mt-2 small text-secondary">
+                {selectedGarden.description && (
+                  <p className="mb-1">{selectedGarden.description}</p>
+                )}
+                {selectedGarden.email && (
+                  <p className="mb-1">📧 {selectedGarden.email}</p>
+                )}
+                {selectedGarden.phone && (
+                  <p className="mb-1">📞 {selectedGarden.phone}</p>
+                )}
+                {selectedGarden.socialLinks?.length > 0 && (
+                  <div>
+                    {selectedGarden.socialLinks.map((link, i) => (
+                      <a
+                        key={i}
+                        href={link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="d-block"
+                      >
+                        {link}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* All gardens list */}
+          {gardens.length === 0 ? (
+            <div className="user-portal-card user-portal-card--empty">
+              No gardens registered yet.
+            </div>
+          ) : (
+            gardens.map((garden, index) => (
+              <div
+                key={index}
+                className={`user-portal-card ${selectedGarden?.name === garden.name ? 'user-portal-card--selected' : ''}`}
+              >
+                <div className="user-portal-card__title">{garden.name}</div>
+                <div className="user-portal-card__meta">
+                  {garden.address} · {garden.tags?.join(', ')}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
+
+      {/* ── Register for Harvest Time ── */}
       <div className="column column-light">
         <p className="column-header">Register for Harvest Time</p>
         <div className="column-body">
@@ -35,6 +105,8 @@ export default function ThreeColumn() {
           </div>
         </div>
       </div>
+
+      {/* ── Register for Volunteer Time ── */}
       <div className="column column-light">
         <p className="column-header">Register for Volunteer Time</p>
         <div className="column-body">
@@ -51,6 +123,7 @@ export default function ThreeColumn() {
           </div>
         </div>
       </div>
+
     </div>
   );
 }
