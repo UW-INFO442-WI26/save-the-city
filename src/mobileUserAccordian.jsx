@@ -2,39 +2,133 @@ import React, { useState, useEffect } from 'react';
 import { database } from './firebase';
 import { ref, onValue } from 'firebase/database';
 
+export default function Accordian({ selectedGarden }) {
+  const [gardens, setGardens] = useState([]);
 
-export default function Accordian() {
+  useEffect(() => {
+    const gardensRef = ref(database, 'gardens');
+    const unsubscribe = onValue(gardensRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setGardens(Object.values(data));
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="accordion accordion-flush" id="accordionFlushExample">
+
+      {/* ── Community Garden Info ── */}
       <div className="accordion-item">
         <h2 className="accordion-header" id="flush-headingOne">
-          <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+          <button
+            className="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#flush-collapseOne"
+            aria-expanded="false"
+            aria-controls="flush-collapseOne"
+          >
             Community Garden Info
           </button>
         </h2>
-        <div id="flush-collapseOne" className="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+        <div
+          id="flush-collapseOne"
+          className="accordion-collapse collapse"
+          aria-labelledby="flush-headingOne"
+          data-bs-parent="#accordionFlushExample"
+        >
           <div className="accordion-body accordion-body-padded">
             <p className="column-body__intro">
-              Click a garden on the map to see details here: address, host contact, produce types, and description.
+              Click a marker on the map to see garden details here.
             </p>
-            <div className="user-portal-card user-portal-card--empty">
-              No garden selected. Use the map or filters above to find a community garden.
-            </div>
-            <div className="user-portal-card">
-              <div className="user-portal-card__title">Example: Sunrise Community Garden</div>
-              <div className="user-portal-card__meta">123 Green St, Seattle · Vegetables, Herbs</div>
-              <p className="mb-0 mt-2 small text-secondary">Sample listing. Real gardens will show address, owner, and a link to Google Maps.</p>
-            </div>
+
+            {/* No garden selected yet */}
+            {!selectedGarden && (
+              <div className="user-portal-card user-portal-card--empty">
+                No garden selected. Tap a pin on the map to get started.
+              </div>
+            )}
+
+            {/* Selected garden card */}
+            {selectedGarden && (
+              <div className="user-portal-card user-portal-card--selected">
+                <div className="user-portal-card__title">{selectedGarden.name}</div>
+                <div className="user-portal-card__meta">
+                  {selectedGarden.address} · {selectedGarden.tags?.join(', ')}
+                </div>
+                <div className="mt-2 small text-secondary">
+                  {selectedGarden.description && (
+                    <p className="mb-1">{selectedGarden.description}</p>
+                  )}
+                  {selectedGarden.email && (
+                    <p className="mb-1">📧 {selectedGarden.email}</p>
+                  )}
+                  {selectedGarden.phone && (
+                    <p className="mb-1">📞 {selectedGarden.phone}</p>
+                  )}
+                  {selectedGarden.socialLinks?.length > 0 && (
+                    <div>
+                      {selectedGarden.socialLinks.map((link, i) => (
+                        <a
+                          key={i}
+                          href={link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="d-block"
+                        >
+                          {link}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* All gardens list */}
+            {gardens.length === 0 ? (
+              <div className="user-portal-card user-portal-card--empty">
+                No gardens registered yet.
+              </div>
+            ) : (
+              gardens.map((garden, index) => (
+                <div
+                  key={index}
+                  className={`user-portal-card ${selectedGarden?.name === garden.name ? 'user-portal-card--selected' : ''}`}
+                >
+                  <div className="user-portal-card__title">{garden.name}</div>
+                  <div className="user-portal-card__meta">
+                    {garden.address} · {garden.tags?.join(', ')}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
+
+      {/* ── Register for Harvest Time ── */}
       <div className="accordion-item">
         <h2 className="accordion-header" id="flush-headingTwo">
-          <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+          <button
+            className="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#flush-collapseTwo"
+            aria-expanded="false"
+            aria-controls="flush-collapseTwo"
+          >
             Register for Harvest Time
           </button>
         </h2>
-        <div id="flush-collapseTwo" className="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+        <div
+          id="flush-collapseTwo"
+          className="accordion-collapse collapse"
+          aria-labelledby="flush-headingTwo"
+          data-bs-parent="#accordionFlushExample"
+        >
           <div className="accordion-body accordion-body-padded">
             <p className="column-body__intro">
               Harvest times let you sign up to help pick or receive produce. Click a card to register.
@@ -50,13 +144,27 @@ export default function Accordian() {
           </div>
         </div>
       </div>
+
+      {/* ── Register for Volunteer Time ── */}
       <div className="accordion-item">
         <h2 className="accordion-header" id="flush-headingThree">
-          <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+          <button
+            className="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#flush-collapseThree"
+            aria-expanded="false"
+            aria-controls="flush-collapseThree"
+          >
             Register for Volunteer Time
           </button>
         </h2>
-        <div id="flush-collapseThree" className="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+        <div
+          id="flush-collapseThree"
+          className="accordion-collapse collapse"
+          aria-labelledby="flush-headingThree"
+          data-bs-parent="#accordionFlushExample"
+        >
           <div className="accordion-body accordion-body-padded">
             <p className="column-body__intro">
               Volunteer times are work sessions at the garden. Choose a slot and register to join.
@@ -72,6 +180,7 @@ export default function Accordian() {
           </div>
         </div>
       </div>
+
     </div>
   );
 }

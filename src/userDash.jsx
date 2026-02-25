@@ -8,6 +8,7 @@ export default function UserDash() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
   const [eventType, setEventType] = useState('all');
+  const [selectedGarden, setSelectedGarden] = useState(null);
 
   function handleClearFilters() {
     setSearchQuery('');
@@ -31,14 +32,16 @@ export default function UserDash() {
           searchQuery={searchQuery}
           selectedTags={selectedTags}
           eventType={eventType}
+          onGardenSelect={setSelectedGarden}
         />
       </div>
+
       <div className="bottom-section">
         <div className="mobile">
-          <Accordian />
+          <Accordian selectedGarden={selectedGarden}/>
         </div>
         <div className="desktop">
-          <ThreeColumn />
+          <ThreeColumn selectedGarden={selectedGarden}/>
         </div>
       </div>
     </div>
