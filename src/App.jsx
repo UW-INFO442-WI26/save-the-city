@@ -6,7 +6,7 @@ import UserDash from './userDash';
 import Home from './home';
 import AboutUs from './aboutUs';
 import Navbar from './navbar';
-import Footer from './footer';
+/*import Footer from './footer';*/
 
 function App() {
   return (
@@ -22,8 +22,6 @@ function App() {
 
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
-
-      <Footer />
 
 
     </div>
