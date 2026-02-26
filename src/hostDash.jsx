@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ref, push } from 'firebase/database';
+import { ref, push, onValue, remove } from 'firebase/database';
 import { database } from './firebase';
 import HostLocationPicker from './hostLocationPicker';
 
@@ -173,38 +173,49 @@ export default function HostDash() {
   const [query, setQuery] = useState('');
   const [selectedId, setSelectedId] = useState(null);
   const [showTimeForm, setShowTimeForm] = useState(false);
+   const [hostEmail, setHostEmail] = useState('');
 
-  function handleGardenConfirm(newGarden) {
-    const name = newGarden.name || newGarden.gardenName || 'Untitled Garden';
+  // Keep HostDash in sync with all gardens in Firebase so hosts can manage older gardens too.
+  useEffect(() => {
+    const gardensRef = ref(database, 'gardens');
+    const unsubscribe = onValue(gardensRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        setGardens([]);
+        return;
+      }
 
-    const address =
-      newGarden.address ||
-      (newGarden.street
-        ? `${newGarden.street}, ${newGarden.city || ''}, ${newGarden.state || ''} ${
-            newGarden.zip || ''
-          }`
-            .replace(/\s+/g, ' ')
-            .trim()
-        : '');
+      const normalizedGardens = Object.entries(data).map(([id, garden]) => ({
+        id,
+        firebaseId: id,
+        ...garden,
+      }));
 
-    const tags = newGarden.tags || [];
+      setGardens(normalizedGardens);
+    });
 
-    const normalized = {
-      ...newGarden,
-      name,
-      address,
-      tags,
-    };
+    return () => unsubscribe();
+  }, []);
 
-    setGardens((prev) => [...prev, { id: Date.now(), ...normalized }]);
+  function handleGardenConfirm(_newGarden) {
+    // The Firebase listener above will pick up the new garden and refresh the list.
     setShowMap(false);
   }
 
   const filteredGardens = useMemo(() => {
+    const emailFilter = hostEmail.trim().toLowerCase();
     const q = query.trim().toLowerCase();
-    if (!q) return gardens;
 
-    return gardens.filter((g) => {
+    let base = gardens;
+
+    // Limit to gardens owned by this host's email, if provided.
+    if (emailFilter) {
+      base = base.filter((g) => (g.email || '').toLowerCase() === emailFilter);
+    }
+
+    if (!q) return base;
+
+    return base.filter((g) => {
       const name = (g.name || '').toLowerCase();
       const address = (g.address || '').toLowerCase();
       const tags = Array.isArray(g.tags)
@@ -212,11 +223,11 @@ export default function HostDash() {
         : String(g.tags || '').toLowerCase();
       return name.includes(q) || address.includes(q) || tags.includes(q);
     });
-  }, [gardens, query]);
+  }, [gardens, query, hostEmail]);
 
   const selectedGarden = gardens.find((g) => g.id === selectedId) || null;
 
-  function handleDeleteSelected() {
+  async function handleDeleteSelected() {
     if (!selectedGarden) return;
 
     const ok = window.confirm(
@@ -224,8 +235,19 @@ export default function HostDash() {
     );
     if (!ok) return;
 
-    setGardens((prev) => prev.filter((g) => g.id !== selectedGarden.id));
-    setSelectedId(null);
+    if (!selectedGarden.firebaseId) {
+      window.alert('This garden is missing its Firebase id and cannot be deleted.');
+      return;
+    }
+
+    try {
+      const gardenRef = ref(database, `gardens/${selectedGarden.firebaseId}`);
+      await remove(gardenRef);
+      setSelectedId(null);
+      // The Firebase listener will update the gardens list after deletion.
+    } catch (err) {
+      window.alert('There was a problem deleting this garden. Please try again.');
+    }
   }
 
   return (
@@ -263,10 +285,24 @@ export default function HostDash() {
               <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-2 mb-3">
                 <div>
                   <h2 className="h5 mb-1">My gardens</h2>
-                  <div className="text-muted small">Select a garden to see actions.</div>
+                  <div className="text-muted small">
+                    Enter your email to see gardens you host.
+                  </div>
                 </div>
 
                 <div className="w-100 w-md-auto" style={{ maxWidth: 320 }}>
+                  <label htmlFor="hostEmail" className="form-label small mb-1">
+                    Your email
+                  </label>
+                  <input
+                    id="hostEmail"
+                    type="email"
+                    className="form-control form-control-sm mb-2"
+                    value={hostEmail}
+                    onChange={(e) => setHostEmail(e.target.value)}
+                    placeholder="garden@example.com"
+                  />
+
                   <label htmlFor="gardenSearch" className="form-label small mb-1">
                     Search
                   </label>

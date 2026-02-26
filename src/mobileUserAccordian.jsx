@@ -133,14 +133,34 @@ export default function Accordian({ selectedGarden }) {
             <p className="column-body__intro">
               Harvest times let you sign up to help pick or receive produce. Click a card to register.
             </p>
-            <div className="user-portal-card user-portal-card--empty">
-              No harvest times posted yet. Check back or select a garden above.
-            </div>
-            <div className="user-portal-card">
-              <div className="user-portal-card__title">Sat, Mar 8 · 9:00 AM – 12:00 PM</div>
-              <div className="user-portal-card__meta">Sunrise Community Garden · 3 spots left</div>
-              <button type="button" className="btn btn-success btn-sm mt-2">Register</button>
-            </div>
+
+            {!selectedGarden && (
+              <div className="user-portal-card user-portal-card--empty">
+                No garden selected. Choose a garden above to see harvest times.
+              </div>
+            )}
+
+            {selectedGarden && !selectedGarden.harvestTimes && (
+              <div className="user-portal-card user-portal-card--empty">
+                No harvest times posted yet for this garden.
+              </div>
+            )}
+
+            {selectedGarden && selectedGarden.harvestTimes && (
+              Object.entries(selectedGarden.harvestTimes).map(([id, slot]) => (
+                <div key={id} className="user-portal-card">
+                  <div className="user-portal-card__title">
+                    {slot.date} · {slot.start} – {slot.end}
+                  </div>
+                  <div className="user-portal-card__meta">
+                    {selectedGarden.name}{slot.spots ? ` · ${slot.spots} spots left` : ''}
+                  </div>
+                  <button type="button" className="btn btn-success btn-sm mt-2">
+                    Register
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -169,14 +189,34 @@ export default function Accordian({ selectedGarden }) {
             <p className="column-body__intro">
               Volunteer times are work sessions at the garden. Choose a slot and register to join.
             </p>
-            <div className="user-portal-card user-portal-card--empty">
-              No volunteer times posted yet. Check back or select a garden above.
-            </div>
-            <div className="user-portal-card">
-              <div className="user-portal-card__title">Sun, Mar 10 · 10:00 AM – 2:00 PM</div>
-              <div className="user-portal-card__meta">Sunrise Community Garden · 5 spots left</div>
-              <button type="button" className="btn btn-success btn-sm mt-2">Register</button>
-            </div>
+
+            {!selectedGarden && (
+              <div className="user-portal-card user-portal-card--empty">
+                No garden selected. Choose a garden above to see volunteer times.
+              </div>
+            )}
+
+            {selectedGarden && !selectedGarden.volunteerTimes && (
+              <div className="user-portal-card user-portal-card--empty">
+                No volunteer times posted yet for this garden.
+              </div>
+            )}
+
+            {selectedGarden && selectedGarden.volunteerTimes && (
+              Object.entries(selectedGarden.volunteerTimes).map(([id, slot]) => (
+                <div key={id} className="user-portal-card">
+                  <div className="user-portal-card__title">
+                    {slot.date} · {slot.start} – {slot.end}
+                  </div>
+                  <div className="user-portal-card__meta">
+                    {selectedGarden.name}{slot.spots ? ` · ${slot.spots} spots left` : ''}
+                  </div>
+                  <button type="button" className="btn btn-success btn-sm mt-2">
+                    Register
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
