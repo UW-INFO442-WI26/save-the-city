@@ -71,36 +71,7 @@ export default function SearchFilterBar({ searchQuery, onSearchChange, selectedT
           </div>
         </div>
 
-        <div className="search-filter-bar__tags dropdown">
-          <button
-            type="button"
-            className="btn btn-outline-success btn-sm dropdown-toggle"
-            onClick={() => setTagDropdownOpen(!tagDropdownOpen)}
-            aria-expanded={tagDropdownOpen}
-            aria-haspopup="true"
-            id="tagFilterDropdown"
-          >
-            Tags {selectedTags.length > 0 && `(${selectedTags.length})`}
-          </button>
-          <ul
-            className={`dropdown-menu ${tagDropdownOpen ? 'show' : ''}`}
-            aria-labelledby="tagFilterDropdown"
-          >
-            {GARDEN_TAGS.map((tag) => (
-              <li key={tag}>
-                <label className="dropdown-item d-flex align-items-center gap-2 mb-0 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={selectedTags.includes(tag)}
-                    onChange={() => toggleTag(tag)}
-                    className="form-check-input"
-                  />
-                  <span>{tag}</span>
-                </label>
-              </li>
-            ))}
-          </ul>
-        </div>
+
 
         {hasActiveFilters && (
           <button
