@@ -1,12 +1,178 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ref, push } from 'firebase/database';
+import { database } from './firebase';
 import HostLocationPicker from './hostLocationPicker';
+
+function GardenTimeForm({ garden, onClose }) {
+  const [form, setForm] = useState({
+    kind: 'harvest', // 'harvest' or 'volunteer'
+    date: '',
+    start: '',
+    end: '',
+    spots: '',
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError('');
+
+    if (!garden?.firebaseId) {
+      setError('This garden is missing its Firebase id. Try registering it again.');
+      return;
+    }
+
+    if (!form.date || !form.start || !form.end) {
+      setError('Please fill in date, start, and end time.');
+      return;
+    }
+
+    const spotsNumber = form.spots ? Number(form.spots) : 0;
+    const pathSegment = form.kind === 'volunteer' ? 'volunteerTimes' : 'harvestTimes';
+
+    try {
+      setSaving(true);
+      const timesRef = ref(database, `gardens/${garden.firebaseId}/${pathSegment}`);
+      await push(timesRef, {
+        date: form.date,
+        start: form.start,
+        end: form.end,
+        spots: spotsNumber,
+      });
+      onClose();
+    } catch (err) {
+      setError('There was a problem saving this time slot. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="modal d-block" tabIndex="-1" role="dialog">
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Add garden time</h5>
+            <button type="button" className="btn-close" onClick={onClose} />
+          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="modal-body">
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Type</label>
+                <div className="d-flex gap-3">
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      id="timeKindHarvest"
+                      name="kind"
+                      value="harvest"
+                      checked={form.kind === 'harvest'}
+                      onChange={handleChange}
+                    />
+                    <label className="form-check-label" htmlFor="timeKindHarvest">
+                      Harvest time
+                    </label>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      id="timeKindVolunteer"
+                      name="kind"
+                      value="volunteer"
+                      checked={form.kind === 'volunteer'}
+                      onChange={handleChange}
+                    />
+                    <label className="form-check-label" htmlFor="timeKindVolunteer">
+                      Volunteer time
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Date</label>
+                <input
+                  type="date"
+                  name="date"
+                  className="form-control"
+                  value={form.date}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="row mb-3">
+                <div className="col-6">
+                  <label className="form-label fw-semibold">Start time</label>
+                  <input
+                    type="time"
+                    name="start"
+                    className="form-control"
+                    value={form.start}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="col-6">
+                  <label className="form-label fw-semibold">End time</label>
+                  <input
+                    type="time"
+                    name="end"
+                    className="form-control"
+                    value={form.end}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label fw-semibold">
+                  Spots available <span className="text-muted fw-normal small">(optional)</span>
+                </label>
+                <input
+                  type="number"
+                  name="spots"
+                  className="form-control"
+                  min="0"
+                  value={form.spots}
+                  onChange={handleChange}
+                  placeholder="e.g. 5"
+                />
+              </div>
+
+              {error && <div className="alert alert-danger py-2">{error}</div>}
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-outline-secondary" onClick={onClose}>
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-success" disabled={saving}>
+                {saving ? 'Saving…' : 'Save time'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function HostDash() {
   const [showMap, setShowMap] = useState(false);
   const [gardens, setGardens] = useState([]);
   const [query, setQuery] = useState('');
   const [selectedId, setSelectedId] = useState(null);
+  const [showTimeForm, setShowTimeForm] = useState(false);
 
   function handleGardenConfirm(newGarden) {
     const name = newGarden.name || newGarden.gardenName || 'Untitled Garden';
@@ -195,7 +361,12 @@ export default function HostDash() {
                     <button type="button" className="btn btn-outline-success btn-sm">
                       Edit details
                     </button>
-                    <button type="button" className="btn btn-outline-secondary btn-sm">
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary btn-sm"
+                      onClick={() => setShowTimeForm(true)}
+                      disabled={!selectedGarden.firebaseId}
+                    >
                       Manage times
                     </button>
                     <button
@@ -232,6 +403,10 @@ export default function HostDash() {
         >
           <HostLocationPicker onConfirm={handleGardenConfirm} onCancel={() => setShowMap(false)} />
         </div>
+      )}
+
+      {showTimeForm && selectedGarden && (
+        <GardenTimeForm garden={selectedGarden} onClose={() => setShowTimeForm(false)} />
       )}
     </div>
   );
