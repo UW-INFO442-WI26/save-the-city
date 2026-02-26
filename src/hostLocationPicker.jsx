@@ -57,11 +57,17 @@ export default function HostLocationPicker({ onConfirm, onCancel }) {
       ...formData,
     };
 
-    // Write to Firebase
+    // Write to Firebase and capture the new garden's ID
     const gardensRef = ref(database, 'gardens');
-    push(gardensRef, gardenData);
+    const newGardenRef = push(gardensRef, gardenData);
+    const firebaseId = newGardenRef.key;
 
-    onConfirm(gardenData);
+    // Pass the Firebase ID back to HostDash so it can manage times later
+    onConfirm({
+      firebaseId,
+      ...gardenData,
+    });
+
     setPinLocation(null);
     setShowForm(false);
   }
