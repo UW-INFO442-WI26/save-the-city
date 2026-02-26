@@ -38,10 +38,10 @@ export default function UserDash() {
 
       <div className="bottom-section">
         <div className="mobile">
-          <Accordian selectedGarden={selectedGarden}/>
+          <Accordian selectedGarden={selectedGarden} eventType={eventType} />
         </div>
         <div className="desktop">
-          <ThreeColumn selectedGarden={selectedGarden}/>
+          <ThreeColumn selectedGarden={selectedGarden} eventType={eventType} />
         </div>
       </div>
     </div>

@@ -1,8 +1,172 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ref, push, onValue, remove } from 'firebase/database';
+import { ref, push, onValue, remove, update } from 'firebase/database';
 import { database } from './firebase';
+import { SEATTLE } from './constants';
 import HostLocationPicker from './hostLocationPicker';
+
+const STATES = [
+  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut',
+  'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana',
+  'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland',
+  'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri',
+  'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey',
+  'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+  'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
+  'South Carolina', 'South Dakota', 'Tennessee', 'Texas',
+  'Utah', 'Vermont', 'Virginia', 'Washington',
+  'West Virginia', 'Wisconsin', 'Wyoming',
+];
+
+function EditGardenForm({ garden, onClose }) {
+  const [form, setForm] = useState({
+    name: garden?.name || '',
+    description: garden?.description || '',
+    address: garden?.address || '',
+    city: garden?.city || SEATTLE.name,
+    state: garden?.state || SEATTLE.state,
+    zip: garden?.zip || SEATTLE.defaultZip,
+    email: garden?.email || '',
+    phone: garden?.phone || '',
+    tags: Array.isArray(garden?.tags) ? garden.tags.join(', ') : (garden?.tags || ''),
+    socialLinks: Array.isArray(garden?.socialLinks) && garden.socialLinks.length > 0
+      ? [...garden.socialLinks]
+      : [''],
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleSocialLinkChange(index, value) {
+    setForm((prev) => {
+      const newLinks = [...prev.socialLinks];
+      newLinks[index] = value;
+      return { ...prev, socialLinks: newLinks };
+    });
+  }
+
+  function addSocialLink() {
+    setForm((prev) => ({ ...prev, socialLinks: [...prev.socialLinks, ''] }));
+  }
+
+  function removeSocialLink(index) {
+    const updated = form.socialLinks.filter((_, i) => i !== index);
+    setForm((prev) => ({ ...prev, socialLinks: updated.length ? updated : [''] }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError('');
+    if (!garden?.firebaseId) {
+      setError('This garden has no Firebase id.');
+      return;
+    }
+    const tags = form.tags
+      .split(',')
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0);
+    const socialLinks = form.socialLinks.filter((link) => link.trim());
+
+    try {
+      setSaving(true);
+      const gardenRef = ref(database, `gardens/${garden.firebaseId}`);
+      await update(gardenRef, {
+        name: form.name.trim(),
+        description: form.description.trim(),
+        address: form.address.trim(),
+        city: form.city.trim(),
+        state: form.state,
+        zip: form.zip.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        tags,
+        socialLinks,
+      });
+      onClose();
+    } catch (err) {
+      setError('Failed to save. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="modal d-block" tabIndex="-1" role="dialog">
+      <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Edit garden details</h5>
+            <button type="button" className="btn-close" onClick={onClose} />
+          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="modal-body">
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Garden name</label>
+                <input type="text" name="name" className="form-control" value={form.name} onChange={handleChange} required />
+              </div>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Description</label>
+                <textarea name="description" className="form-control" rows={3} value={form.description} onChange={handleChange} />
+              </div>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Address</label>
+                <input type="text" name="address" className="form-control" value={form.address} onChange={handleChange} required />
+              </div>
+              <div className="row mb-3">
+                <div className="col-5">
+                  <label className="form-label fw-semibold">City</label>
+                  <input type="text" name="city" className="form-control" value={form.city} onChange={handleChange} required />
+                </div>
+                <div className="col-3">
+                  <label className="form-label fw-semibold">State</label>
+                  <select name="state" className="form-select" value={form.state} onChange={handleChange} required>
+                    <option value="">--</option>
+                    {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div className="col-4">
+                  <label className="form-label fw-semibold">ZIP</label>
+                  <input type="text" name="zip" className="form-control" value={form.zip} onChange={handleChange} required />
+                </div>
+              </div>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Tags (comma-separated)</label>
+                <input type="text" name="tags" className="form-control" value={form.tags} onChange={handleChange} placeholder="Vegetables, Herbs" />
+              </div>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Email</label>
+                <input type="email" name="email" className="form-control" value={form.email} onChange={handleChange} />
+              </div>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Phone</label>
+                <input type="tel" name="phone" className="form-control" value={form.phone} onChange={handleChange} />
+              </div>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Social links</label>
+                {form.socialLinks.map((link, i) => (
+                  <div key={i} className="d-flex gap-2 mb-2">
+                    <input type="url" className="form-control" value={link} onChange={(e) => handleSocialLinkChange(i, e.target.value)} placeholder="https://..." />
+                    <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => removeSocialLink(i)}>✕</button>
+                  </div>
+                ))}
+                <button type="button" className="btn btn-outline-secondary btn-sm" onClick={addSocialLink}>+ Add link</button>
+              </div>
+              {error && <div className="alert alert-danger py-2">{error}</div>}
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-outline-secondary" onClick={onClose}>Cancel</button>
+              <button type="submit" className="btn btn-success" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function GardenTimeForm({ garden, onClose }) {
   const [form, setForm] = useState({
@@ -173,7 +337,8 @@ export default function HostDash() {
   const [query, setQuery] = useState('');
   const [selectedId, setSelectedId] = useState(null);
   const [showTimeForm, setShowTimeForm] = useState(false);
-   const [hostEmail, setHostEmail] = useState('');
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [hostEmail, setHostEmail] = useState('');
 
   // Keep HostDash in sync with all gardens in Firebase so hosts can manage older gardens too.
   useEffect(() => {
@@ -394,7 +559,12 @@ export default function HostDash() {
                   </div>
 
                   <div className="d-flex flex-wrap gap-2">
-                    <button type="button" className="btn btn-outline-success btn-sm">
+                    <button
+                      type="button"
+                      className="btn btn-outline-success btn-sm"
+                      onClick={() => setShowEditForm(true)}
+                      disabled={!selectedGarden.firebaseId}
+                    >
                       Edit details
                     </button>
                     <button
@@ -443,6 +613,14 @@ export default function HostDash() {
 
       {showTimeForm && selectedGarden && (
         <GardenTimeForm garden={selectedGarden} onClose={() => setShowTimeForm(false)} />
+      )}
+
+      {showEditForm && selectedGarden && (
+        <EditGardenForm
+          key={selectedGarden.firebaseId}
+          garden={selectedGarden}
+          onClose={() => setShowEditForm(false)}
+        />
       )}
     </div>
   );

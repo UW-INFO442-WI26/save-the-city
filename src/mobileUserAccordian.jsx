@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { database } from './firebase';
-import { ref, onValue } from 'firebase/database';
+import { ref, onValue, push } from 'firebase/database';
 
-export default function Accordian({ selectedGarden }) {
+export default function Accordian({ selectedGarden, eventType }) {
   const [gardens, setGardens] = useState([]);
+  const [registerSlot, setRegisterSlot] = useState(null);
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerSaving, setRegisterSaving] = useState(false);
 
   useEffect(() => {
     const gardensRef = ref(database, 'gardens');
@@ -15,6 +18,28 @@ export default function Accordian({ selectedGarden }) {
     });
     return () => unsubscribe();
   }, []);
+
+  async function handleRegisterSubmit(e) {
+    e.preventDefault();
+    if (!registerSlot || !selectedGarden?.firebaseId || !registerEmail.trim()) return;
+    setRegisterSaving(true);
+    try {
+      const path = `gardens/${selectedGarden.firebaseId}/${registerSlot.kind}Times/${registerSlot.slotId}/registrations`;
+      await push(ref(database, path), { email: registerEmail.trim() });
+      setRegisterSlot(null);
+      setRegisterEmail('');
+    } catch (err) {
+      window.alert('Registration failed. Please try again.');
+    } finally {
+      setRegisterSaving(false);
+    }
+  }
+
+  function spotsLeft(slot) {
+    const total = slot.spots || 0;
+    const registered = slot.registrations ? Object.keys(slot.registrations).length : 0;
+    return Math.max(0, total - registered);
+  }
 
   return (
     <div className="accordion accordion-flush" id="accordionFlushExample">
@@ -121,6 +146,9 @@ export default function Accordian({ selectedGarden }) {
             aria-controls="flush-collapseTwo"
           >
             Register for Harvest Time
+            {eventType === 'harvest' && (
+              <span className="badge bg-success ms-2">Filter active</span>
+            )}
           </button>
         </h2>
         <div
@@ -147,19 +175,28 @@ export default function Accordian({ selectedGarden }) {
             )}
 
             {selectedGarden && selectedGarden.harvestTimes && (
-              Object.entries(selectedGarden.harvestTimes).map(([id, slot]) => (
-                <div key={id} className="user-portal-card">
-                  <div className="user-portal-card__title">
-                    {slot.date} · {slot.start} – {slot.end}
+              Object.entries(selectedGarden.harvestTimes).map(([id, slot]) => {
+                const left = spotsLeft(slot);
+                return (
+                  <div key={id} className="user-portal-card">
+                    <div className="user-portal-card__title">
+                      {slot.date} · {slot.start} – {slot.end}
+                    </div>
+                    <div className="user-portal-card__meta">
+                      {selectedGarden.name}
+                      {typeof slot.spots === 'number' && ` · ${left} spots left`}
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm mt-2"
+                      disabled={typeof slot.spots === 'number' && left <= 0}
+                      onClick={() => setRegisterSlot({ slotId: id, kind: 'harvest' })}
+                    >
+                      Register
+                    </button>
                   </div>
-                  <div className="user-portal-card__meta">
-                    {selectedGarden.name}{slot.spots ? ` · ${slot.spots} spots left` : ''}
-                  </div>
-                  <button type="button" className="btn btn-success btn-sm mt-2">
-                    Register
-                  </button>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
@@ -177,6 +214,9 @@ export default function Accordian({ selectedGarden }) {
             aria-controls="flush-collapseThree"
           >
             Register for Volunteer Time
+            {eventType === 'volunteer' && (
+              <span className="badge bg-success ms-2">Filter active</span>
+            )}
           </button>
         </h2>
         <div
@@ -203,24 +243,76 @@ export default function Accordian({ selectedGarden }) {
             )}
 
             {selectedGarden && selectedGarden.volunteerTimes && (
-              Object.entries(selectedGarden.volunteerTimes).map(([id, slot]) => (
-                <div key={id} className="user-portal-card">
-                  <div className="user-portal-card__title">
-                    {slot.date} · {slot.start} – {slot.end}
+              Object.entries(selectedGarden.volunteerTimes).map(([id, slot]) => {
+                const left = spotsLeft(slot);
+                return (
+                  <div key={id} className="user-portal-card">
+                    <div className="user-portal-card__title">
+                      {slot.date} · {slot.start} – {slot.end}
+                    </div>
+                    <div className="user-portal-card__meta">
+                      {selectedGarden.name}
+                      {typeof slot.spots === 'number' && ` · ${left} spots left`}
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm mt-2"
+                      disabled={typeof slot.spots === 'number' && left <= 0}
+                      onClick={() => setRegisterSlot({ slotId: id, kind: 'volunteer' })}
+                    >
+                      Register
+                    </button>
                   </div>
-                  <div className="user-portal-card__meta">
-                    {selectedGarden.name}{slot.spots ? ` · ${slot.spots} spots left` : ''}
-                  </div>
-                  <button type="button" className="btn btn-success btn-sm mt-2">
-                    Register
-                  </button>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
       </div>
 
+      {registerSlot && selectedGarden && (
+        <div className="modal d-block" tabIndex="-1" role="dialog">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Register for this slot</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => { setRegisterSlot(null); setRegisterEmail(''); }}
+                />
+              </div>
+              <form onSubmit={handleRegisterSubmit}>
+                <div className="modal-body">
+                  <div className="mb-3">
+                    <label className="form-label">Your email</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={registerEmail}
+                      onChange={(e) => setRegisterEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => { setRegisterSlot(null); setRegisterEmail(''); }}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn btn-success" disabled={registerSaving}>
+                    {registerSaving ? 'Saving…' : 'Register'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
