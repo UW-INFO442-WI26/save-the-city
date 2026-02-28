@@ -657,6 +657,26 @@ button:focus-visible {
   border-left: 1px solid #e0e0e0;
 }
 
+.host-list-item {
+  color: #333 !important;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  width: 100%;
+}
+
+.host-list-item:hover {
+  background-color: #f5f5f5;
+  color: #333 !important;
+}
+
+.host-list-item--active {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+  border-color: #2e7d32;
+}
+
 /* ============================================
    ABOUT US PAGE
    ============================================ */
