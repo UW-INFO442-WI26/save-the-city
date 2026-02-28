@@ -130,7 +130,7 @@ button:focus-visible {
 
 .navbar-brand-wrapper {
   align-items: center;
-  margin-right: 1.5rem;
+  margin-right: 0.5rem;
 }
 
 .navbar-tagline {
@@ -143,7 +143,9 @@ button:focus-visible {
 }
 
 .navbar-collapse {
-  background-color: rgba(255, 255, 255, 0.6) !important;
+  flex-grow: 0 !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
 }
 
  .navbar {
@@ -157,7 +159,7 @@ button:focus-visible {
   background-image: url('/src/assets/Community_Garden.jpg');
   background-size: cover;
   background-position: center;
-  opacity: 0.3; 
+  opacity: 0.2; 
   z-index: 0;
 }
 
@@ -170,6 +172,15 @@ button:focus-visible {
   text-shadow: 0px 0px 1px currentColor; 
   background-color: rgba(255, 255, 255, 0.3);
   border-radius: 4px;
+}
+
+.nav-link {
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+}
+
+.nav-link.active {
+  font-weight: 700;
+  color: #2e7d32 !important;
 }
 
 /* ============================================
