@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SEATTLE } from './constants';
+import { SEATTLE, GARDEN_TAGS } from './constants';
 
 const STATES = [
   'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut',
@@ -12,6 +12,11 @@ const STATES = [
   'South Carolina', 'South Dakota', 'Tennessee', 'Texas',
   'Utah', 'Vermont', 'Virginia', 'Washington',
   'West Virginia', 'Wisconsin', 'Wyoming'
+];
+
+const PRESET_TAGS = [
+  'Vegetables', 'Fruits', 'Herbs', 'Flowers', 'Organic',
+  'Community', 'Educational', 'Youth', 'Composting', 'Wheelchair Accessible'
 ];
 
 export default function HostGardenForm({ onSubmit, onCancel }) {
@@ -173,19 +178,38 @@ export default function HostGardenForm({ onSubmit, onCancel }) {
                 </div>
               </div>
 
-              <div className="mb-3">
-                <label className="form-label fw-semibold">
-                  Tags <span className="text-muted fw-normal small">(comma-separated)</span>
-                </label>
-                <input
-                  type="text"
-                  name="tags"
-                  className="form-control"
-                  value={form.tags}
-                  onChange={handleChange}
-                  placeholder="Vegetables, Herbs, Flowers"
-                />
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Tags</label>
+              <div className="d-flex flex-wrap gap-2 mb-2">
+                {GARDEN_TAGS.map((tag) => {
+                  const isActive = form.tags.split(',').map(t => t.trim()).includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      className={`search-filter-bar__chip ${isActive ? 'search-filter-bar__chip--active' : ''}`}
+                      onClick={() => {
+                        const current = form.tags.split(',').map(t => t.trim()).filter(t => t);
+                        const updated = isActive
+                          ? current.filter(t => t !== tag)
+                          : [...current, tag];
+                        setForm(prev => ({ ...prev, tags: updated.join(', ') }));
+                      }}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
               </div>
+              <input
+                type="text"
+                name="tags"
+                className="form-control"
+                value={form.tags}
+                onChange={handleChange}
+                placeholder="Or type custom tags, comma-separated"
+              />
+            </div>
 
               <div className="mb-3">
                 <label className="form-label fw-semibold">Email</label>
