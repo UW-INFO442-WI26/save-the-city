@@ -333,9 +333,8 @@ button:focus-visible {
    MAP
    ============================================ */
 .user-dash .map-container-wrapper {
-  flex-shrink: 0;
-  min-height: 50vh;
-  height: 50vh;
+  flex: 1;
+  min-height: 0;
 }
 
 .user-dash .map-container,

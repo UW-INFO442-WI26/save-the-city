@@ -7,7 +7,7 @@ const EVENT_TYPE_OPTIONS = [
   { value: 'harvest', label: 'Harvest times' },
 ];
 
-export default function SearchFilterBar({ searchQuery, onSearchChange, selectedTags, onTagsChange, eventType, onEventTypeChange, onClear }) {
+export default function SearchFilterBar({ searchQuery, onSearchChange, selectedTags, onTagsChange, eventType, onEventTypeChange, onClear, onSearchSubmit }) {
   const [tagDropdownOpen, setTagDropdownOpen] = useState(false);
 
   function toggleTag(tag) {
@@ -51,6 +51,7 @@ export default function SearchFilterBar({ searchQuery, onSearchChange, selectedT
             placeholder="Search by garden name or description..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') onSearchSubmit?.(); }}
             aria-label="Search gardens"
           />
         </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { database } from './firebase';
 import { ref, onValue, push } from 'firebase/database';
 
-export default function ThreeColumn({ selectedGarden, eventType }) {
+export default function ThreeColumn({ selectedGarden, onClose, eventType }) {
   const [gardens, setGardens] = useState([]);
   const [registerSlot, setRegisterSlot] = useState(null);
   const [registerEmail, setRegisterEmail] = useState('');
@@ -12,9 +12,7 @@ export default function ThreeColumn({ selectedGarden, eventType }) {
     const gardensRef = ref(database, 'gardens');
     const unsubscribe = onValue(gardensRef, (snapshot) => {
       const data = snapshot.val();
-      if (data) {
-        setGardens(Object.values(data));
-      }
+      if (data) setGardens(Object.values(data));
     });
     return () => unsubscribe();
   }, []);
@@ -29,7 +27,6 @@ export default function ThreeColumn({ selectedGarden, eventType }) {
       setRegisterSlot(null);
       setRegisterEmail('');
     } catch (err) {
-      // eslint-disable-next-line no-alert
       window.alert('Registration failed. Please try again.');
     } finally {
       setRegisterSaving(false);
@@ -42,193 +39,139 @@ export default function ThreeColumn({ selectedGarden, eventType }) {
     return Math.max(0, total - registered);
   }
 
+  // Don't render anything if no garden is selected
+  if (!selectedGarden) return null;
+
   return (
-    <div className="three-column-layout">
+    <>
+      {/* Dark overlay — click it to close */}
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(0,0,0,0.45)',
+          zIndex: 999,
+        }}
+      />
 
-      <div className="column column-light">
-        <p className="column-header">Community Garden Info</p>
-        <div className="column-body">
-          <p className="column-body__intro">
-            Click a garden on the map to see details here: address, host contact, produce types, and description.
-          </p>
+      {/* Modal panel */}
+      <div style={{
+        position: 'fixed',
+        top: '50%', left: '50%',
+        transform: 'translate(-50%, -50%)',
+        background: '#fff',
+        borderRadius: 12,
+        boxShadow: '0 8px 40px rgba(0,0,0,0.25)',
+        zIndex: 1000,
+        width: '90%',
+        maxWidth: 820,
+        maxHeight: '85vh',
+        overflowY: 'auto',
+        padding: '28px 32px',
+      }}>
 
-           {!selectedGarden && (
-            <div className="user-portal-card user-portal-card--empty">
-              No garden selected. Use the map to find a community garden.
-            </div>
-          )}
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute', top: 14, right: 16,
+            background: 'none', border: 'none',
+            fontSize: 22, cursor: 'pointer', color: '#555',
+          }}
+        >×</button>
 
-          {selectedGarden && (
-            <div className="user-portal-card user-portal-card--selected">
-              <div className="user-portal-card__title">{selectedGarden.name}</div>
-              <div className="user-portal-card__meta">
-                {selectedGarden.address} · {selectedGarden.tags?.join(', ')}
-              </div>
-              <div className="mt-2 small text-secondary">
-                {selectedGarden.description && (
-                  <p className="mb-1">{selectedGarden.description}</p>
-                )}
-                {selectedGarden.email && (
-                  <p className="mb-1">📧 {selectedGarden.email}</p>
-                )}
-                {selectedGarden.phone && (
-                  <p className="mb-1">📞 {selectedGarden.phone}</p>
-                )}
-                {selectedGarden.socialLinks?.length > 0 && (
-                  <div>
-                    {selectedGarden.socialLinks.map((link, i) => (
-                      <a
-                        key={i}
-                        href={link}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="d-block"
-                      >
-                        {link}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* All gardens list */}
-          {gardens.length === 0 ? (
-            <div className="user-portal-card user-portal-card--empty">
-              No gardens registered yet.
-            </div>
-          ) : (
-            gardens.map((garden, index) => (
-              <div
-                key={index}
-                className={`user-portal-card ${selectedGarden?.name === garden.name ? 'user-portal-card--selected' : ''}`}
-              >
-                <div className="user-portal-card__title">{garden.name}</div>
-                <div className="user-portal-card__meta">
-                  {garden.address} · {garden.tags?.join(', ')}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* ── Register for Harvest Time ── */}
-      <div className="column column-light">
-        <p className="column-header">
-          Register for Harvest Time
-          {eventType === 'harvest' && (
-            <span className="badge bg-success ms-2">Filter active</span>
-          )}
+        {/* Garden name header */}
+        <h4 style={{ marginTop: 0, marginBottom: 4 }}>{selectedGarden.name}</h4>
+        <p style={{ color: '#666', marginBottom: 20 }}>
+          {selectedGarden.address} · {selectedGarden.tags?.join(', ')}
         </p>
-        <div className="column-body">
-          <p className="column-body__intro">
-            Harvest times let you sign up to help pick or receive produce. Click a card to register.
-          </p>
 
-          {!selectedGarden && (
-            <div className="user-portal-card user-portal-card--empty">
-              No garden selected. Choose a garden above to see harvest times.
-            </div>
-          )}
+        {/* Info + description */}
+        <div style={{ marginBottom: 20 }}>
+          {selectedGarden.description && <p>{selectedGarden.description}</p>}
+          {selectedGarden.email && <p>📧 {selectedGarden.email}</p>}
+          {selectedGarden.phone && <p>📞 {selectedGarden.phone}</p>}
+          {selectedGarden.socialLinks?.length > 0 && selectedGarden.socialLinks.map((link, i) => (
+            <a key={i} href={link} target="_blank" rel="noreferrer" style={{ display: 'block' }}>{link}</a>
+          ))}
+        </div>
 
-          {selectedGarden && !selectedGarden.harvestTimes && (
-            <div className="user-portal-card user-portal-card--empty">
-              No harvest times posted yet for this garden.
-            </div>
-          )}
+        <hr />
 
-          {selectedGarden && selectedGarden.harvestTimes && (
-            Object.entries(selectedGarden.harvestTimes).map(([id, slot]) => {
-              const left = spotsLeft(slot);
-              return (
-                <div key={id} className="user-portal-card">
-                  <div className="user-portal-card__title">
-                    {slot.date} · {slot.start} – {slot.end}
+        {/* Two columns: Harvest + Volunteer */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginTop: 16 }}>
+
+          {/* Harvest Times */}
+          <div>
+            <p style={{ fontWeight: 600, marginBottom: 8 }}>
+              Harvest Times
+              {eventType === 'harvest' && <span className="badge bg-success ms-2">Filter active</span>}
+            </p>
+            {!selectedGarden.harvestTimes ? (
+              <p className="text-muted small">No harvest times posted yet.</p>
+            ) : (
+              Object.entries(selectedGarden.harvestTimes).map(([id, slot]) => {
+                const left = spotsLeft(slot);
+                return (
+                  <div key={id} className="user-portal-card" style={{ marginBottom: 10 }}>
+                    <div className="user-portal-card__title">{slot.date} · {slot.start} – {slot.end}</div>
+                    <div className="user-portal-card__meta">
+                      {selectedGarden.name}
+                      {typeof slot.spots === 'number' && ` · ${left} spots left`}
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm mt-2"
+                      disabled={typeof slot.spots === 'number' && left <= 0}
+                      onClick={() => setRegisterSlot({ slotId: id, kind: 'harvest' })}
+                    >Register</button>
                   </div>
-                  <div className="user-portal-card__meta">
-                    {selectedGarden.name}
-                    {typeof slot.spots === 'number' && ` · ${left} spots left`}
+                );
+              })
+            )}
+          </div>
+
+          {/* Volunteer Times */}
+          <div>
+            <p style={{ fontWeight: 600, marginBottom: 8 }}>
+              Volunteer Times
+              {eventType === 'volunteer' && <span className="badge bg-success ms-2">Filter active</span>}
+            </p>
+            {!selectedGarden.volunteerTimes ? (
+              <p className="text-muted small">No volunteer times posted yet.</p>
+            ) : (
+              Object.entries(selectedGarden.volunteerTimes).map(([id, slot]) => {
+                const left = spotsLeft(slot);
+                return (
+                  <div key={id} className="user-portal-card" style={{ marginBottom: 10 }}>
+                    <div className="user-portal-card__title">{slot.date} · {slot.start} – {slot.end}</div>
+                    <div className="user-portal-card__meta">
+                      {selectedGarden.name}
+                      {typeof slot.spots === 'number' && ` · ${left} spots left`}
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm mt-2"
+                      disabled={typeof slot.spots === 'number' && left <= 0}
+                      onClick={() => setRegisterSlot({ slotId: id, kind: 'volunteer' })}
+                    >Register</button>
                   </div>
-                  <button
-                    type="button"
-                    className="btn btn-success btn-sm mt-2"
-                    disabled={typeof slot.spots === 'number' && left <= 0}
-                    onClick={() => setRegisterSlot({ slotId: id, kind: 'harvest' })}
-                  >
-                    Register
-                  </button>
-                </div>
-              );
-            })
-          )}
+                );
+              })
+            )}
+          </div>
         </div>
       </div>
 
-      {/* ── Register for Volunteer Time ── */}
-      <div className="column column-light">
-        <p className="column-header">
-          Register for Volunteer Time
-          {eventType === 'volunteer' && (
-            <span className="badge bg-success ms-2">Filter active</span>
-          )}
-        </p>
-        <div className="column-body">
-          <p className="column-body__intro">
-            Volunteer times are work sessions at the garden. Choose a slot and register to join.
-          </p>
-
-          {!selectedGarden && (
-            <div className="user-portal-card user-portal-card--empty">
-              No garden selected. Choose a garden above to see volunteer times.
-            </div>
-          )}
-
-          {selectedGarden && !selectedGarden.volunteerTimes && (
-            <div className="user-portal-card user-portal-card--empty">
-              No volunteer times posted yet for this garden.
-            </div>
-          )}
-
-          {selectedGarden && selectedGarden.volunteerTimes && (
-            Object.entries(selectedGarden.volunteerTimes).map(([id, slot]) => {
-              const left = spotsLeft(slot);
-              return (
-                <div key={id} className="user-portal-card">
-                  <div className="user-portal-card__title">
-                    {slot.date} · {slot.start} – {slot.end}
-                  </div>
-                  <div className="user-portal-card__meta">
-                    {selectedGarden.name}
-                    {typeof slot.spots === 'number' && ` · ${left} spots left`}
-                  </div>
-                  <button
-                    type="button"
-                    className="btn btn-success btn-sm mt-2"
-                    disabled={typeof slot.spots === 'number' && left <= 0}
-                    onClick={() => setRegisterSlot({ slotId: id, kind: 'volunteer' })}
-                  >
-                    Register
-                  </button>
-                </div>
-              );
-            })
-          )}
-        </div>
-      </div>
-
-      {registerSlot && selectedGarden && (
-        <div className="modal d-block" tabIndex="-1" role="dialog">
+      {/* Registration email modal */}
+      {registerSlot && (
+        <div className="modal d-block" tabIndex="-1" role="dialog" style={{ zIndex: 1100 }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Register for this slot</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => { setRegisterSlot(null); setRegisterEmail(''); }}
-                />
+                <button type="button" className="btn-close"
+                  onClick={() => { setRegisterSlot(null); setRegisterEmail(''); }} />
               </div>
               <form onSubmit={handleRegisterSubmit}>
                 <div className="modal-body">
@@ -245,13 +188,8 @@ export default function ThreeColumn({ selectedGarden, eventType }) {
                   </div>
                 </div>
                 <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={() => { setRegisterSlot(null); setRegisterEmail(''); }}
-                  >
-                    Cancel
-                  </button>
+                  <button type="button" className="btn btn-outline-secondary"
+                    onClick={() => { setRegisterSlot(null); setRegisterEmail(''); }}>Cancel</button>
                   <button type="submit" className="btn btn-success" disabled={registerSaving}>
                     {registerSaving ? 'Saving…' : 'Register'}
                   </button>
@@ -261,6 +199,6 @@ export default function ThreeColumn({ selectedGarden, eventType }) {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

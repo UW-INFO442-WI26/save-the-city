@@ -16,7 +16,7 @@ L.Icon.Default.mergeOptions({
 });
 
 
-export default function MapWindow({ searchQuery, selectedTags, eventType, onGardenSelect }) {
+export default function MapWindow({ searchQuery, selectedTags, eventType, onGardenSelect, submitted, onSubmitHandled }) {
   const [gardens, setGardens] = useState([]);
 
   useEffect(() => {
@@ -64,6 +64,14 @@ export default function MapWindow({ searchQuery, selectedTags, eventType, onGard
 
     return list;
   }, [gardens, eventType, searchQuery, selectedTags]);
+
+useEffect(() => {
+    if (!submitted) return;
+    if (filteredGardens.length === 1) {
+      onGardenSelect(filteredGardens[0]);
+    }
+    onSubmitHandled();
+  }, [submitted, filteredGardens]);
 
   return (
     <MapContainer

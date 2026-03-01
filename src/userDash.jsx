@@ -9,6 +9,7 @@ export default function UserDash() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [eventType, setEventType] = useState('all');
   const [selectedGarden, setSelectedGarden] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
 
   function handleClearFilters() {
     setSearchQuery('');
@@ -26,6 +27,7 @@ export default function UserDash() {
         eventType={eventType}
         onEventTypeChange={setEventType}
         onClear={handleClearFilters}
+        onSearchSubmit={() => setSubmitted(true)}
       />
       <div className="map-container-wrapper">
         <MapWindow
@@ -33,17 +35,17 @@ export default function UserDash() {
           selectedTags={selectedTags}
           eventType={eventType}
           onGardenSelect={setSelectedGarden}
+          submitted={submitted}
+          onSubmitHandled={() => setSubmitted(false)}
         />
       </div>
 
-      <div className="bottom-section">
-        <div className="mobile">
-          <Accordian selectedGarden={selectedGarden} eventType={eventType} />
-        </div>
-        <div className="desktop">
-          <ThreeColumn selectedGarden={selectedGarden} eventType={eventType} />
-        </div>
-      </div>
+      {/* Modal popup — replaces the bottom bar */}
+      <ThreeColumn
+        selectedGarden={selectedGarden}
+        onClose={() => setSelectedGarden(null)}
+        eventType={eventType}
+      />
     </div>
   );
 }
