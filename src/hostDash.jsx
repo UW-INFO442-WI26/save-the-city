@@ -95,8 +95,8 @@ function EditGardenForm({ garden, onClose }) {
   }
 
   return (
-    <div className="modal d-block" tabIndex="-1" role="dialog">
-      <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div className="modal d-block" tabIndex="-1" role="dialog" style={{ overflowY: 'auto', position: 'fixed', inset: 0, zIndex: 1050, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <div className="modal-dialog modal-dialog-centered" style={{margin: '2vh auto', maxHeight: '96vh', overflowY: 'auto' }}>
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Edit garden details</h5>

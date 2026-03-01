@@ -718,3 +718,14 @@ button:focus-visible {
   line-height: 1.65;
   max-width: 42rem;
 }
+
+/* ============================================
+   MODAL SCROLLING
+   ============================================ */
+.modal-dialog-scrollable .modal-content {
+  max-height: 90vh;
+}
+
+.modal-dialog-scrollable .modal-body {
+  overflow-y: auto;
+}
