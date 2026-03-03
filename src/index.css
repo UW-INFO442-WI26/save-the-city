@@ -417,70 +417,12 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding-bottom: 3.5rem; 
-}
-
-.bottom-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-
-.desktop,
-.mobile {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+  background-color: #fff;
 }
 
 /* ============================================
    LAYOUT — THREE COLUMN
    ============================================ */
-.three-column-layout {
-  display: flex;
-  flex: 1;
-  min-height: 40vh;
-  width: 100%;
-}
-
-.column-header {
-  margin-bottom: 0.5rem;
-  background-color: #eff1f0;
-  width: 100%;
-  padding: 0.5rem;
-  text-align: center;
-}
-
-.column {
-  flex: 1;
-  overflow-y: auto;
-  border-right: 1px solid #28a745;
-  min-height: 0;
-}
-
-.column:last-child {
-  border-right: none;
-}
-
-.column-light {
-  background-color: #f8f9fa;
-  color: black;
-}
-
-.column-body {
-  padding: 1rem;
-}
-
-.column-body__intro {
-  font-size: 0.9rem;
-  color: #444;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-}
-
 .user-portal-card {
   background: #fff;
   border: 1px solid #e0e0e0;
@@ -506,20 +448,6 @@ button:focus-visible {
   font-size: 0.9rem;
   text-align: center;
   padding: 1.5rem;
-}
-
-.accordion-body-padded {
-  padding: 1rem;
-}
-
-/* ============================================
-   RESPONSIVE — MOBILE / DESKTOP VISIBILITY
-   ============================================ */
-.desktop { display: none; }
-
-@media (min-width: 768px) {
-  .mobile { display: none; }
-  .desktop { display: block; }
 }
 
 /* ============================================

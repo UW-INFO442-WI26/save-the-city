@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import MapWindow from './mapWindow';
-import Accordian from './mobileUserAccordian';
 import ThreeColumn from './userThreeColumn';
 import SearchFilterBar from './SearchFilterBar';
 
