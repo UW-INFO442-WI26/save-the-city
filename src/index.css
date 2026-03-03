@@ -183,6 +183,12 @@ button:focus-visible {
   color: #2e7d32 !important;
 }
 
+.nav-pills .nav-link.active {
+  background-color: transparent;
+  color: #198754;
+  border: 2px solid #198754;
+}
+
 /* ============================================
    SEARCH & FILTER BAR (User Portal)
    ============================================ */
