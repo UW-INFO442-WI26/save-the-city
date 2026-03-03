@@ -331,6 +331,31 @@ function GardenTimeForm({ garden, onClose }) {
   );
 }
 
+function countGardenRegistrations(garden) {
+  if (!garden) return { total: 0, volunteer: 0, harvest: 0 };
+
+  let volunteer = 0;
+  let harvest = 0;
+
+  if (garden.volunteerTimes) {
+    Object.values(garden.volunteerTimes).forEach((slot) => {
+      if (slot && slot.registrations) {
+        volunteer += Object.keys(slot.registrations).length;
+      }
+    });
+  }
+
+  if (garden.harvestTimes) {
+    Object.values(garden.harvestTimes).forEach((slot) => {
+      if (slot && slot.registrations) {
+        harvest += Object.keys(slot.registrations).length;
+      }
+    });
+  }
+
+  return { total: volunteer + harvest, volunteer, harvest };
+}
+
 export default function HostDash() {
   const [showMap, setShowMap] = useState(false);
   const [gardens, setGardens] = useState([]);
@@ -391,6 +416,10 @@ export default function HostDash() {
   }, [gardens, query, hostEmail]);
 
   const selectedGarden = gardens.find((g) => g.id === selectedId) || null;
+  const registrationCounts = useMemo(
+    () => (selectedGarden ? countGardenRegistrations(selectedGarden) : { total: 0, volunteer: 0, harvest: 0 }),
+    [selectedGarden]
+  );
 
   async function handleDeleteSelected() {
     if (!selectedGarden) return;
@@ -556,6 +585,9 @@ export default function HostDash() {
                   <div className="mb-3">
                     <div className="fw-semibold">{selectedGarden.name}</div>
                     <div className="text-muted small">{selectedGarden.address}</div>
+                    <div className="text-muted small mt-1">
+                      Registered: {registrationCounts.total} total (Volunteer: {registrationCounts.volunteer}, Harvest: {registrationCounts.harvest})
+                    </div>
                   </div>
 
                   <div className="d-flex flex-wrap gap-2">
