@@ -639,7 +639,7 @@ export default function HostDash() {
           aria-modal="true"
           aria-label="Register a new garden"
         >
-          <HostLocationPicker onConfirm={handleGardenConfirm} onCancel={() => setShowMap(false)} />
+          <HostLocationPicker onConfirm={handleGardenConfirm} onCancel={() => setShowMap(false)} user={user}/>
         </div>
       )}
 

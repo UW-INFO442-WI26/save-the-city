@@ -26,7 +26,7 @@ function PinDrop({ onPin }) {
   return null;
 }
 
-export default function HostLocationPicker({ onConfirm, onCancel }) {
+export default function HostLocationPicker({ onConfirm, onCancel, user}) {
   const [pinLocation, setPinLocation] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [gardens, setGardens] = useState([]);
@@ -54,6 +54,7 @@ export default function HostLocationPicker({ onConfirm, onCancel }) {
         lat: pinLocation.lat,
         lng: pinLocation.lng,
       },
+      ownerUid: user?.uid,
       ...formData,
     };
 
