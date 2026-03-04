@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ref, push, onValue, remove, update } from 'firebase/database';
 import { database } from './firebase';
 import { SEATTLE } from './constants';
+import { useAuth } from './Auth';
 import HostLocationPicker from './hostLocationPicker';
 
 const STATES = [
@@ -364,6 +365,7 @@ export default function HostDash() {
   const [showTimeForm, setShowTimeForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [hostEmail, setHostEmail] = useState('');
+  const { user } = useAuth();
 
   // Keep HostDash in sync with all gardens in Firebase so hosts can manage older gardens too.
   useEffect(() => {
