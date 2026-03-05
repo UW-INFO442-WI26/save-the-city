@@ -78,3 +78,10 @@
 .host-hero__lead {
   opacity: 0.8;
 }
+
+.navbar .nav-link.active {
+  color: rgb(255, 255, 255) !important;
+  font-display: auto;
+  font-size: 1.1em;
+  font-weight: 1000;
+}

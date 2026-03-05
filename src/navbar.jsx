@@ -19,15 +19,18 @@ export default function Navbar() {
   const avatarLetter = displayName[0].toUpperCase();
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top w-100 py-3">
+    <nav className="navbar navbar-expand-lg navbar-dark fixed-top w-100 py-3" style={{ background: 'rgba(31, 74, 46, 0.72)', backdropFilter: 'blur(4px)' }}>
       <div className="container-fluid">
 
         <div className="navbar-brand-wrapper d-flex flex-column">
-          <NavLink className="navbar-brand brand text-success bungee-regular p-0 me-0" to="/">
+          <NavLink className="navbar-brand brand text-white bungee-regular fs-4 fw-bold" to="/">
             Save the City
           </NavLink>
-          <span className="navbar-tagline text-muted small">Seattle community gardens</span>
+          <span className="navbar-tagline small" style={{ color: 'rgb(255, 255, 255)' }}>
+            Seattle community gardens
+          </span>
         </div>
+
 
         <button
           className="navbar-toggler"
@@ -37,35 +40,36 @@ export default function Navbar() {
           aria-controls="navbarSupportedContent"
           aria-expanded="false"
           aria-label="Toggle navigation"
+          style={{ background: 'rgba(255,255,255,0.2)', borderColor: 'rgba(255,255,255,0.4)' }}
         >
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
 
-          <ul className="navbar-nav mb-2 mb-lg-0">
+        <div className="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+          <ul className="navbar-nav align-items-center">
             <li className="nav-item">
-              <NavLink className="nav-link brand" to="/home">Home</NavLink>
+              <NavLink className="nav-link text-white fw-semibold" to="/home">Home</NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link brand" to="/about">About Us</NavLink>
+              <NavLink className="nav-link text-white fw-semibold" to="/about">About Us</NavLink>
             </li>
             {user && (
               <>
                 <li className="nav-item">
-                  <NavLink className="nav-link brand" to="/user">User Portal</NavLink>
+                  <NavLink className="nav-link text-white fw-semibold" to="/user">User Portal</NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink className="nav-link brand" to="/host">Host Portal</NavLink>
+                  <NavLink className="nav-link text-white fw-semibold" to="/host">Host Portal</NavLink>
                 </li>
               </>
             )}
           </ul>
 
-          <ul className="navbar-nav ms-auto">
+          <ul className="navbar-nav ms-1 align-items-center">
             {user ? (
               <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a className="nav-link dropdown-toggle d-flex align-items-center gap-2 text-white fw-semibold" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <span className="rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold" style={{ width: 28, height: 28, fontSize: '0.75rem' }}>
                     {avatarLetter}
                   </span>
