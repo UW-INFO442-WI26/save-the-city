@@ -8,7 +8,7 @@ import HostDash from './hostDash';
 import UserDash from './userDash';
 import Home from './home';
 import AboutUs from './aboutUs';
-import Navbar from './Navbar';
+import Navbar from './navbar';
 
 
 function PrivateRoute({ children }) {
