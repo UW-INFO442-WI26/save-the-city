@@ -171,7 +171,7 @@ function EditGardenForm({ garden, onClose }) {
 
 function GardenTimeForm({ garden, onClose }) {
   const [form, setForm] = useState({
-    kind: 'harvest', // 'harvest' or 'volunteer'
+    kind: 'harvest',
     date: '',
     start: '',
     end: '',
@@ -233,97 +233,40 @@ function GardenTimeForm({ garden, onClose }) {
                 <label className="form-label fw-semibold">Type</label>
                 <div className="d-flex gap-3">
                   <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      id="timeKindHarvest"
-                      name="kind"
-                      value="harvest"
-                      checked={form.kind === 'harvest'}
-                      onChange={handleChange}
-                    />
-                    <label className="form-check-label" htmlFor="timeKindHarvest">
-                      Harvest time
-                    </label>
+                    <input className="form-check-input" type="radio" id="timeKindHarvest" name="kind" value="harvest" checked={form.kind === 'harvest'} onChange={handleChange} />
+                    <label className="form-check-label" htmlFor="timeKindHarvest">Harvest time</label>
                   </div>
                   <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      id="timeKindVolunteer"
-                      name="kind"
-                      value="volunteer"
-                      checked={form.kind === 'volunteer'}
-                      onChange={handleChange}
-                    />
-                    <label className="form-check-label" htmlFor="timeKindVolunteer">
-                      Volunteer time
-                    </label>
+                    <input className="form-check-input" type="radio" id="timeKindVolunteer" name="kind" value="volunteer" checked={form.kind === 'volunteer'} onChange={handleChange} />
+                    <label className="form-check-label" htmlFor="timeKindVolunteer">Volunteer time</label>
                   </div>
                 </div>
               </div>
-
               <div className="mb-3">
                 <label className="form-label fw-semibold">Date</label>
-                <input
-                  type="date"
-                  name="date"
-                  className="form-control"
-                  value={form.date}
-                  onChange={handleChange}
-                  required
-                />
+                <input type="date" name="date" className="form-control" value={form.date} onChange={handleChange} required />
               </div>
-
               <div className="row mb-3">
                 <div className="col-6">
                   <label className="form-label fw-semibold">Start time</label>
-                  <input
-                    type="time"
-                    name="start"
-                    className="form-control"
-                    value={form.start}
-                    onChange={handleChange}
-                    required
-                  />
+                  <input type="time" name="start" className="form-control" value={form.start} onChange={handleChange} required />
                 </div>
                 <div className="col-6">
                   <label className="form-label fw-semibold">End time</label>
-                  <input
-                    type="time"
-                    name="end"
-                    className="form-control"
-                    value={form.end}
-                    onChange={handleChange}
-                    required
-                  />
+                  <input type="time" name="end" className="form-control" value={form.end} onChange={handleChange} required />
                 </div>
               </div>
-
               <div className="mb-3">
                 <label className="form-label fw-semibold">
                   Spots available <span className="text-muted fw-normal small">(optional)</span>
                 </label>
-                <input
-                  type="number"
-                  name="spots"
-                  className="form-control"
-                  min="0"
-                  value={form.spots}
-                  onChange={handleChange}
-                  placeholder="e.g. 5"
-                />
+                <input type="number" name="spots" className="form-control" min="0" value={form.spots} onChange={handleChange} placeholder="e.g. 5" />
               </div>
-
               {error && <div className="alert alert-danger py-2">{error}</div>}
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-outline-secondary" onClick={onClose}>
-                Cancel
-              </button>
-              <button type="submit" className="btn btn-success" disabled={saving}>
-                {saving ? 'Saving…' : 'Save time'}
-              </button>
+              <button type="button" className="btn btn-outline-secondary" onClick={onClose}>Cancel</button>
+              <button type="submit" className="btn btn-success" disabled={saving}>{saving ? 'Saving…' : 'Save time'}</button>
             </div>
           </form>
         </div>
@@ -364,11 +307,12 @@ export default function HostDash() {
   const [selectedId, setSelectedId] = useState(null);
   const [showTimeForm, setShowTimeForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [hostEmail, setHostEmail] = useState('');
-  const { user } = useAuth();
+  const { user, setOpenAccountMenu } = useAuth();
 
-  // Keep HostDash in sync with all gardens in Firebase so hosts can manage older gardens too.
+  // Fetch only gardens belonging to the logged-in user via their UID.
   useEffect(() => {
+    if (!user) return;
+
     const gardensRef = ref(database, 'gardens');
     const unsubscribe = onValue(gardensRef, (snapshot) => {
       const data = snapshot.val();
@@ -377,37 +321,25 @@ export default function HostDash() {
         return;
       }
 
-      const normalizedGardens = Object.entries(data).map(([id, garden]) => ({
-        id,
-        firebaseId: id,
-        ...garden,
-      }));
+      const normalizedGardens = Object.entries(data)
+        .map(([id, garden]) => ({ id, firebaseId: id, ...garden }))
+        .filter((g) => g.uid === user.uid); // Only show this user's gardens
 
       setGardens(normalizedGardens);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   function handleGardenConfirm(_newGarden) {
-    // The Firebase listener above will pick up the new garden and refresh the list.
     setShowMap(false);
   }
 
   const filteredGardens = useMemo(() => {
-    const emailFilter = hostEmail.trim().toLowerCase();
     const q = query.trim().toLowerCase();
+    if (!q) return gardens;
 
-    let base = gardens;
-
-    // Limit to gardens owned by this host's email, if provided.
-    if (emailFilter) {
-      base = base.filter((g) => (g.email || '').toLowerCase() === emailFilter);
-    }
-
-    if (!q) return base;
-
-    return base.filter((g) => {
+    return gardens.filter((g) => {
       const name = (g.name || '').toLowerCase();
       const address = (g.address || '').toLowerCase();
       const tags = Array.isArray(g.tags)
@@ -415,7 +347,7 @@ export default function HostDash() {
         : String(g.tags || '').toLowerCase();
       return name.includes(q) || address.includes(q) || tags.includes(q);
     });
-  }, [gardens, query, hostEmail]);
+  }, [gardens, query]);
 
   const selectedGarden = gardens.find((g) => g.id === selectedId) || null;
   const registrationCounts = useMemo(
@@ -440,7 +372,6 @@ export default function HostDash() {
       const gardenRef = ref(database, `gardens/${selectedGarden.firebaseId}`);
       await remove(gardenRef);
       setSelectedId(null);
-      // The Firebase listener will update the gardens list after deletion.
     } catch (err) {
       window.alert('There was a problem deleting this garden. Please try again.');
     }
@@ -467,9 +398,14 @@ export default function HostDash() {
               + Register garden
             </button>
 
-            <Link to="/user" className="btn btn-outline-secondary">
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={() => setOpenAccountMenu(true)}
+            >
               View as volunteer
-            </Link>
+            </button>
+
           </div>
         </section>
 
@@ -482,23 +418,11 @@ export default function HostDash() {
                 <div>
                   <h2 className="h5 mb-1">My gardens</h2>
                   <div className="text-muted small">
-                    Enter your email to see gardens you host.
+                    Showing gardens registered to your account.
                   </div>
                 </div>
 
-                <div className="w-100 w-md-auto" style={{ maxWidth: 320 }}>
-                  <label htmlFor="hostEmail" className="form-label small mb-1">
-                    Your email
-                  </label>
-                  <input
-                    id="hostEmail"
-                    type="email"
-                    className="form-control form-control-sm mb-2"
-                    value={hostEmail}
-                    onChange={(e) => setHostEmail(e.target.value)}
-                    placeholder="garden@example.com"
-                  />
-
+                <div className="w-100 w-md-auto" style={{ maxWidth: 260 }}>
                   <label htmlFor="gardenSearch" className="form-label small mb-1">
                     Search
                   </label>
@@ -543,9 +467,7 @@ export default function HostDash() {
                       <button
                         key={g.id}
                         type="button"
-                        className={`text-start host-list-item ${
-                          isSelected ? 'host-list-item--active' : ''
-                        }`}
+                        className={`text-start host-list-item ${isSelected ? 'host-list-item--active' : ''}`}
                         onClick={() => setSelectedId(g.id)}
                         aria-pressed={isSelected ? 'true' : 'false'}
                       >
@@ -635,13 +557,8 @@ export default function HostDash() {
       </div>
 
       {showMap && (
-        <div
-          className="map-overlay"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Register a new garden"
-        >
-          <HostLocationPicker onConfirm={handleGardenConfirm} onCancel={() => setShowMap(false)} user={user}/>
+        <div className="map-overlay" role="dialog" aria-modal="true" aria-label="Register a new garden">
+          <HostLocationPicker onConfirm={handleGardenConfirm} onCancel={() => setShowMap(false)} user={user} />
         </div>
       )}
 

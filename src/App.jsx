@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -9,29 +9,53 @@ import UserDash from './userDash';
 import Home from './home';
 import AboutUs from './aboutUs';
 import Navbar from './Navbar';
+import RoleSelector from './Roleselector';
 
+function PrivateRoute({ children, requiredRole }) {
+  const { user, role, roleLoading } = useAuth();
 
-function PrivateRoute({ children }) {
-  const { user } = useAuth();
-  return user ? children : <Navigate to="/login" replace />;
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (roleLoading) {
+    return null;
+  }
+
+  if (!role) {
+    return <RoleSelector />;
+  }
+
+  if (requiredRole && role !== requiredRole) {
+    return <Navigate to={role === 'host' ? '/host' : '/user'} replace />;
+  }
+
+  return children;
 }
 
 function AppRoutes() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
+
+  function getDefaultRoute() {
+    if (!user) return '/login';
+    if (!role) return '/home';
+    return role === 'host' ? '/host' : '/user';
+  }
 
   return (
     <div>
       <Navbar />
-
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/home" replace /> : <LoginScreen />} />
+        <Route
+          path="/login"
+          element={user ? <Navigate to={getDefaultRoute()} replace /> : <LoginScreen />}
+        />
         <Route path="/home" element={<Home />} />
         <Route path="/about" element={<AboutUs />} />
-
         <Route
           path="/host"
           element={
-            <PrivateRoute>
+            <PrivateRoute requiredRole="host">
               <HostDash />
             </PrivateRoute>
           }
@@ -39,26 +63,22 @@ function AppRoutes() {
         <Route
           path="/user"
           element={
-            <PrivateRoute>
+            <PrivateRoute requiredRole="volunteer">
               <UserDash />
             </PrivateRoute>
           }
         />
-
-        {/* Fallback */}
-        <Route path="/" element={<Navigate to="/home" replace />} />
-        <Route path="*" element={<Navigate to="/home" replace />} />
+        <Route path="/" element={<Navigate to={getDefaultRoute()} replace />} />
+        <Route path="*" element={<Navigate to={getDefaultRoute()} replace />} />
       </Routes>
     </div>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <AuthProvider>
       <AppRoutes />
     </AuthProvider>
   );
 }
-
-export default App;

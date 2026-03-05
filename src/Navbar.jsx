@@ -1,50 +1,70 @@
+import { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from './Auth';
 
 export default function Navbar() {
-  const { user, viewMode, toggleView, logout } = useAuth();
+  const { user, role, saveRole, logout, openAccountMenu, setOpenAccountMenu } = useAuth();
   const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Open dropdown when triggered from another component
+  useEffect(() => {
+    if (openAccountMenu) {
+      setDropdownOpen(true);
+      setOpenAccountMenu(false);
+    }
+  }, [openAccountMenu]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.closest('.dropdown').contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSignOut = async () => {
+    setDropdownOpen(false);
     await logout();
     navigate('/home');
   };
 
-  const handleToggleView = () => {
-    toggleView();
-    navigate(viewMode === 'user' ? '/host' : '/user');
+  const handleToggleView = async () => {
+    const newRole = role === 'volunteer' ? 'host' : 'volunteer';
+    await saveRole(newRole);
+    setDropdownOpen(false);
+    navigate(newRole === 'host' ? '/host' : '/user');
   };
 
   const displayName = user?.displayName || user?.email || 'User';
-  const avatarLetter = displayName[0].toUpperCase();
+  const avatarLetter = displayName?.[0]?.toUpperCase() ?? '?';
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark fixed-top w-100 py-3" style={{ background: 'rgba(31, 74, 46, 0.72)', backdropFilter: 'blur(4px)' }}>
+    <nav className="navbar navbar-expand-lg navbar-dark fixed-top w-100 py-3 bg-success bg-opacity-75">
       <div className="container-fluid">
 
-        <div className="navbar-brand-wrapper d-flex flex-column">
-          <NavLink className="navbar-brand brand text-white bungee-regular fs-4 fw-bold" to="/">
+        <div className="d-flex flex-column">
+          <NavLink className="navbar-brand text-white bungee-regular fs-4 fw-bold mb-0" to="/">
             Save the City
           </NavLink>
-          <span className="navbar-tagline small" style={{ color: 'rgb(255, 255, 255)' }}>
-            Seattle community gardens
-          </span>
+          <span className="small text-white">Seattle community gardens</span>
         </div>
 
-
         <button
-          className="navbar-toggler"
+          className="navbar-toggler border-white"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent"
           aria-expanded="false"
           aria-label="Toggle navigation"
-          style={{ background: 'rgba(255,255,255,0.2)', borderColor: 'rgba(255,255,255,0.4)' }}
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-
 
         <div className="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
           <ul className="navbar-nav align-items-center">
@@ -54,40 +74,49 @@ export default function Navbar() {
             <li className="nav-item">
               <NavLink className="nav-link text-white fw-semibold" to="/about">About Us</NavLink>
             </li>
-            {user && (
-              <>
-                <li className="nav-item">
-                  <NavLink className="nav-link text-white fw-semibold" to="/user">User Portal</NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link text-white fw-semibold" to="/host">Host Portal</NavLink>
-                </li>
-              </>
+            {user && role === 'volunteer' && (
+              <li className="nav-item">
+                <NavLink className="nav-link text-white fw-semibold" to="/user">User Portal</NavLink>
+              </li>
+            )}
+            {user && role === 'host' && (
+              <li className="nav-item">
+                <NavLink className="nav-link text-white fw-semibold" to="/host">Host Portal</NavLink>
+              </li>
             )}
           </ul>
 
-          <ul className="navbar-nav ms-1 align-items-center">
+          <ul className="navbar-nav ms-2 align-items-center">
             {user ? (
               <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle d-flex align-items-center gap-2 text-white fw-semibold" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span className="rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold" style={{ width: 28, height: 28, fontSize: '0.75rem' }}>
+                <a
+                  ref={dropdownRef}
+                  className="nav-link d-flex align-items-center gap-2 text-white fw-semibold"
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); setDropdownOpen((prev) => !prev); }}
+                >
+                  <span
+                    className="rounded-circle bg-white text-success d-flex align-items-center justify-content-center fw-bold fs-6"
+                    style={{ width: 32, height: 32 }}
+                  >
                     {avatarLetter}
                   </span>
                   {displayName}
                 </a>
-                <ul className="dropdown-menu dropdown-menu-end">
+
+                <ul className={`dropdown-menu dropdown-menu-end ${dropdownOpen ? 'show' : ''}`}>
                   <li>
                     <span className="dropdown-item-text small text-muted">{user.email}</span>
                   </li>
                   <li>
                     <span className="dropdown-item-text small text-success fw-bold">
-                      {viewMode === 'user' ? '🌱 User View' : '🏡 Host View'}
+                      {role === 'volunteer' ? '🌱 Volunteer View' : '🏡 Host View'}
                     </span>
                   </li>
                   <li><hr className="dropdown-divider" /></li>
                   <li>
                     <button className="dropdown-item" onClick={handleToggleView}>
-                      ⇄ Switch to {viewMode === 'user' ? 'Host' : 'User'} View
+                      ⇄ Switch to {role === 'volunteer' ? 'Host' : 'Volunteer'} View
                     </button>
                   </li>
                   <li><hr className="dropdown-divider" /></li>
@@ -100,11 +129,12 @@ export default function Navbar() {
               </li>
             ) : (
               <li className="nav-item">
-                <NavLink className="btn btn-success btn-sm px-3" to="/login">Sign In</NavLink>
+                <NavLink className="btn btn-light btn-sm px-3 text-success fw-semibold" to="/login">
+                  Sign In
+                </NavLink>
               </li>
             )}
           </ul>
-
         </div>
       </div>
     </nav>
