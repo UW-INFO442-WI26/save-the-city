@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import garden1 from './assets/sample-garden1.jpg';
 import garden2 from './assets/sample-garden2.png';
 import garden3 from './assets/sample-garden3.png';
+import { useAuth } from './Auth';
 
 const gardenSlides = [garden1, garden2, garden3];
 
 export default function Home() {
   const [slideIndex, setSlideIndex] = useState(0);
+  const { user, role, setOpenAccountMenu } = useAuth();
 
   const prevSlide = () => {
     setSlideIndex(i => (i === 0 ? gardenSlides.length - 1 : i - 1));
@@ -34,8 +36,20 @@ export default function Home() {
                 Find and support community gardens across Seattle. Get fresh produce, volunteer your time, and connect with your neighborhood—all in one place.
               </p>
               <div className="d-flex flex-wrap gap-2 mt-3">
-                <Link to="/user" className="btn btn-success btn-lg">Find gardens</Link>
-                <Link to="/host" className="btn btn-outline-success btn-lg">Host a garden</Link>
+                {role === 'host' ? (
+                  <button className="btn btn-success btn-lg" onClick={() => setOpenAccountMenu(true)}>
+                    Find gardens
+                  </button>
+                ) : (
+                  <Link to="/user" className="btn btn-success btn-lg">Find gardens</Link>
+                )}
+                {role === 'volunteer' ? (
+                  <button className="btn btn-outline-success btn-lg" onClick={() => setOpenAccountMenu(true)}>
+                    Host a garden
+                  </button>
+                ) : (
+                  <Link to="/host" className="btn btn-outline-success btn-lg">Host a garden</Link>
+                )}
               </div>
             </div>
             <div className="col-md-6">
@@ -72,7 +86,13 @@ export default function Home() {
                 <p className="home-card__text flex-grow-1">
                   List your community garden on our map, set volunteer and harvest times, and welcome neighbors who want to grow and share food with you.
                 </p>
-                <Link to="/host" className="btn btn-success btn-lg">Host a garden</Link>
+                {role === 'volunteer' ? (
+                  <button className="btn btn-outline-success btn-lg" onClick={() => setOpenAccountMenu(true)}>
+                    Host a garden
+                  </button>
+                ) : (
+                  <Link to="/host" className="btn btn-outline-success btn-lg">Host a garden</Link>
+                )}
               </div>
             </div>
             <div className="col-md-6">
@@ -81,7 +101,13 @@ export default function Home() {
                 <p className="home-card__text flex-grow-1">
                   Browse gardens near you, filter by what you care about, and sign up for volunteer shifts or harvest times. No experience needed.
                 </p>
-                <Link to="/user" className="btn btn-outline-success btn-lg">Find gardens</Link>
+                {role === 'host' ? (
+                  <button className="btn btn-success btn-lg" onClick={() => setOpenAccountMenu(true)}>
+                    Find gardens
+                  </button>
+                ) : (
+                  <Link to="/user" className="btn btn-success btn-lg">Find gardens</Link>
+                )}
               </div>
             </div>
           </div>
@@ -107,8 +133,20 @@ export default function Home() {
             <p className="mb-0 text-white" style={{ opacity: 0.85, fontSize: '1rem' }}>Pick a path and we'll take you there.</p>
           </div>
           <div className="d-flex flex-wrap gap-3">
-            <Link to="/host" className="btn btn-light fw-semibold btn-lg" style={{ color: '#1f4a2e' }}>I want to host a garden</Link>
-            <Link to="/user" className="btn btn-outline-light fw-semibold btn-lg">I want to volunteer or harvest</Link>
+            {role === 'volunteer' ? (
+              <button className="btn btn-outline-success btn-lg" onClick={() => setOpenAccountMenu(true)}>
+                Host a garden
+              </button>
+            ) : (
+              <Link to="/host" className="btn btn-outline-success btn-lg">Host a garden</Link>
+            )}
+            {role === 'host' ? (
+                <button className="btn btn-success btn-lg" onClick={() => setOpenAccountMenu(true)}>
+                  Find gardens
+                </button>
+              ) : (
+                <Link to="/user" className="btn btn-success btn-lg">Find gardens</Link>
+              )}
           </div>
         </section>
 
@@ -116,62 +154,3 @@ export default function Home() {
     </div>
   );
 }
-
-
-/*  return (
-    <div className="home-page page-content">
-      <div className="container">
-        <section className="home-hero text-center mb-5">
-          <h1 className="home-hero__title">Welcome to Save the City</h1>
-          <p className="home-hero__lead">
-            Find and support community gardens across Seattle. Get fresh produce, volunteer your time, and connect with your neighborhood—all in one place.
-          </p>
-        </section>
-
-        <section className="home-how mb-5">
-          <h2 className="home-section__heading">How it works</h2>
-          <div className="row g-4">
-            <div className="col-md-6">
-              <div className="home-card p-4 h-100">
-                <h3 className="home-card__title text-success">Garden hosts</h3>
-                <p className="home-card__text">
-                  List your community garden on our map, set volunteer and harvest times, and welcome neighbors who want to grow and share food with you.
-                </p>
-                <Link to="/host" className="btn btn-success">Host a garden</Link>
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="home-card p-4 h-100">
-                <h3 className="home-card__title text-success">Volunteers & neighbors</h3>
-                <p className="home-card__text">
-                  Browse gardens near you, filter by what you care about, and sign up for volunteer shifts or harvest times. No experience needed.
-                </p>
-                <Link to="/user" className="btn btn-outline-success">Find gardens</Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="home-why mb-5">
-          <h2 className="home-section__heading">Why community gardens?</h2>
-          <ul className="home-list">
-            <li>Access to fresh, local produce—especially in areas where healthy food is hard to find</li>
-            <li>Stronger neighborhoods through shared spaces and face-to-face connection</li>
-            <li>Climate-friendly, sustainable food grown right in the city</li>
-            <li>A simple way to give back: volunteer a few hours or join a harvest</li>
-          </ul>
-          <Link to="/about" className="btn btn-outline-success mt-3">Learn more about our mission</Link>
-        </section>
-
-        <section className="home-cta text-center py-4">
-          <p className="home-cta__text mb-3">Ready to get started?</p>
-          <div className="d-flex flex-wrap justify-content-center gap-3">
-            <Link to="/host" className="btn btn-success">I want to host a garden</Link>
-            <Link to="/user" className="btn btn-success">I want to volunteer or harvest</Link>
-          </div>
-        </section>
-      </div>
-    </div>
-  );
-}
-/*  */
