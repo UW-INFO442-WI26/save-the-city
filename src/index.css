@@ -191,6 +191,11 @@ button:focus-visible {
   border: 2px solid #198754;
 }
 
+.navbar .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+
 /* ============================================
    SEARCH & FILTER BAR (User Portal)
    ============================================ */
