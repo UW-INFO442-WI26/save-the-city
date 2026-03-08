@@ -17,7 +17,7 @@ export default function UserDash() {
   }
 
   return (
-    <div className="user-dash">
+    <div className="user-dash" role="region" aria-label="User portal - find and explore community gardens">
       <SearchFilterBar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -28,7 +28,7 @@ export default function UserDash() {
         onClear={handleClearFilters}
         onSearchSubmit={() => setSubmitted(true)}
       />
-      <div className="map-container-wrapper">
+      <div className="map-container-wrapper" role="region" aria-label="Map of Seattle community gardens">
         <MapWindow
           searchQuery={searchQuery}
           selectedTags={selectedTags}

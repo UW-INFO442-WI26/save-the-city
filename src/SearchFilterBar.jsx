@@ -42,7 +42,7 @@ export default function SearchFilterBar({ searchQuery, onSearchChange, selectedT
   const hasActiveFilters = searchQuery.trim() || selectedTags.length > 0 || eventType !== 'all';
 
   return (
-    <div className="search-filter-bar">
+    <div className="search-filter-bar" role="search" aria-label="Filter and search gardens">
       <div className="search-filter-bar__row">
         <div className="search-filter-bar__search">
           <input
@@ -79,6 +79,7 @@ export default function SearchFilterBar({ searchQuery, onSearchChange, selectedT
             type="button"
             className="btn btn-outline-secondary btn-sm search-filter-bar__clear"
             onClick={onClear}
+            aria-label="Clear all search and filter options"
           >
             Clear filters
           </button>
@@ -94,6 +95,8 @@ export default function SearchFilterBar({ searchQuery, onSearchChange, selectedT
               type="button"
               className={`search-filter-bar__chip ${isSuggestionActive(sug) ? 'search-filter-bar__chip--active' : ''}`}
               onClick={() => applySuggestion(sug)}
+              aria-pressed={isSuggestionActive(sug)}
+              aria-label={isSuggestionActive(sug) ? `${sug.label} filter active, click to remove` : `Filter by ${sug.label}`}
             >
               {sug.label}
             </button>

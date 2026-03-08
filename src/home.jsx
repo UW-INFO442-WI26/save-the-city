@@ -25,7 +25,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="home-page page-content">
+    <div className="home-page page-content" role="region" aria-label="Welcome and how it works">
       <div className="container">
 
         <section className="home-section">
@@ -57,17 +57,20 @@ export default function Home() {
                 <div style={{ position: 'relative', aspectRatio: '16/10', background: '#dfeee6' }}>
                   <img
                     src={gardenSlides[slideIndex]}
-                    alt="Community garden"
+                    alt={`Community garden image ${slideIndex + 1} of ${gardenSlides.length}`}
                     style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'opacity 0.4s ease' }}
                   />
-                  <button className="slide-arrow slide-arrow--left" onClick={prevSlide}>&#8249;</button>
-                  <button className="slide-arrow slide-arrow--right" onClick={nextSlide}>&#8250;</button>
-                  <div style={{ position: 'absolute', bottom: 10, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 6 }}>
+                  <button type="button" className="slide-arrow slide-arrow--left" onClick={prevSlide} aria-label="Previous image">&#8249;</button>
+                  <button type="button" className="slide-arrow slide-arrow--right" onClick={nextSlide} aria-label="Next image">&#8250;</button>
+                  <div role="tablist" aria-label="Image carousel dots" style={{ position: 'absolute', bottom: 10, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 6 }}>
                     {gardenSlides.map((_, i) => (
-                      <div
+                      <button
                         key={i}
+                        type="button"
                         onClick={() => setSlideIndex(i)}
-                        style={{ width: 8, height: 8, borderRadius: '50%', background: i === slideIndex ? '#fff' : 'rgba(255,255,255,0.5)', cursor: 'pointer', transition: 'background 0.2s' }}
+                        aria-label={`Go to image ${i + 1}`}
+                        aria-current={i === slideIndex ? 'true' : undefined}
+                        style={{ width: 8, height: 8, borderRadius: '50%', background: i === slideIndex ? '#fff' : 'rgba(255,255,255,0.5)', cursor: 'pointer', transition: 'background 0.2s', border: 'none', padding: 0 }}
                       />
                     ))}
                   </div>
@@ -121,7 +124,7 @@ export default function Home() {
             <li>Climate-friendly, sustainable food grown right in the city</li>
             <li>A simple way to give back: volunteer a few hours or join a harvest</li>
           </ul>
-          <Link to="/about" className="btn btn-outline-success btn-lg mt-1.5">Learn more about our mission</Link>
+          <Link to="/about" className="btn btn-outline-success btn-lg mt-1.5" aria-label="Learn more about our mission on the About page">Learn more about our mission</Link>
         </section>
 
         <section

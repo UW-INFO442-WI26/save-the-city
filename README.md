@@ -1,16 +1,50 @@
-# React + Vite
+# Save the City
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web app that connects **Seattle** residents with **community gardens**: find gardens on a map, filter by tags, sign up for volunteer and harvest times, and (as a host) manage your garden and see how many people are registered.
 
-Currently, two official plugins are available:
+## Mission
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+We support **UN Sustainable Development Goal 11 (Sustainable Cities and Communities)** by improving access to fresh produce, volunteer opportunities, and community connections through a single platform.
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React** + **Vite**
+- **React Router**
+- **Firebase** (Auth, Realtime Database)
+- **Leaflet** / **react-leaflet** (map)
+- **Bootstrap** (UI)
 
-## Expanding the ESLint configuration
+## Getting started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. **Clone and install**
+   ```bash
+   git clone https://github.com/YOUR_ORG/save-the-city.git
+   cd save-the-city
+   npm install
+   ```
+
+2. **Run locally**
+   ```bash
+   npm run dev
+   ```
+   Open the URL shown (e.g. http://localhost:5173).
+
+3. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+## Main features
+
+- **Home & About** — Mission, problem statement, and a short video about community gardens.
+- **User Portal** — Map of gardens in Seattle, search and tag filters, suggested searches, volunteer and harvest sign-up. Accessible without logging in.
+- **Host Portal** — Register a garden (map pin + form), edit details, add volunteer/harvest times, see registration counts, delete a garden. Requires sign-in.
+
+## Docs
+
+- **[docs/PERSONAS.md](docs/PERSONAS.md)** — User personas (Maria Lopez, Garden Host; Jamal Carter, Consumer/Volunteer).
+- **[docs/TESTING.md](docs/TESTING.md)** — Testing protocol: how to test each key feature, expected results, workarounds, and code-fix backlog.
+
+## License
+
+See repository settings or add a LICENSE file as needed.

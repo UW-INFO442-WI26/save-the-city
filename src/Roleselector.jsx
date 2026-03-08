@@ -14,15 +14,15 @@ export default function RoleSelector() {
   }
 
   return (
-    <div className="modal d-block" tabIndex="-1" role="dialog">
+    <div className="modal d-block" tabIndex="-1" role="dialog" aria-modal="true" aria-labelledby="role-selector-title" aria-describedby="role-selector-desc">
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content border-success border-2 shadow">
 
           <div className="modal-header bg-success text-white border-0">
-            <h5 className="modal-title fw-bold">Welcome! How will you use the platform?</h5>
+            <h5 id="role-selector-title" className="modal-title fw-bold">Welcome! How will you use the platform?</h5>
           </div>
 
-          <div className="modal-body p-4">
+          <div className="modal-body p-4" id="role-selector-desc">
             <p className="text-muted small mb-4">
               Choose how you'd like to get started. This determines what you'll see after logging in.
             </p>
@@ -33,6 +33,8 @@ export default function RoleSelector() {
               <button
                 type="button"
                 onClick={() => setSelected('volunteer')}
+                aria-pressed={selected === 'volunteer'}
+                aria-label="Choose Volunteer or Visitor to browse gardens and sign up for times"
                 className={`btn text-start p-3 border-2 rounded-3 ${
                   selected === 'volunteer'
                     ? 'btn-success border-success'
@@ -57,6 +59,8 @@ export default function RoleSelector() {
               <button
                 type="button"
                 onClick={() => setSelected('host')}
+                aria-pressed={selected === 'host'}
+                aria-label="Choose Garden Host to register and manage your garden"
                 className={`btn text-start p-3 border-2 rounded-3 ${
                   selected === 'host'
                     ? 'btn-success border-success'

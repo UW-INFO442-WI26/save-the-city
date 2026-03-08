@@ -37,14 +37,16 @@ function AppRoutes() {
   const { user, role } = useAuth();
 
   function getDefaultRoute() {
-    if (!user) return '/login';
+    if (!user) return '/home';
     if (!role) return '/home';
     return role === 'host' ? '/host' : '/user';
   }
 
   return (
     <div>
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <Navbar />
+      <main id="main-content" role="main">
       <Routes>
         <Route
           path="/login"
@@ -60,17 +62,11 @@ function AppRoutes() {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/user"
-          element={
-            <PrivateRoute requiredRole="volunteer">
-              <UserDash />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/user" element={<UserDash />} />
         <Route path="/" element={<Navigate to={getDefaultRoute()} replace />} />
         <Route path="*" element={<Navigate to={getDefaultRoute()} replace />} />
       </Routes>
+      </main>
     </div>
   );
 }

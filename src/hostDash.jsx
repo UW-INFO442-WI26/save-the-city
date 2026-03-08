@@ -378,7 +378,7 @@ export default function HostDash() {
   }
 
   return (
-    <div className="host-page page-content">
+    <div className="host-page page-content" role="region" aria-label="Host dashboard - manage your gardens">
       <div className="container py-4">
         {/* Header + Quick actions */}
         <section className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
@@ -432,6 +432,7 @@ export default function HostDash() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Name, address, or tag…"
+                    aria-label="Search your gardens by name, address, or tag"
                   />
                 </div>
               </div>
@@ -470,6 +471,7 @@ export default function HostDash() {
                         className={`text-start host-list-item ${isSelected ? 'host-list-item--active' : ''}`}
                         onClick={() => setSelectedId(g.id)}
                         aria-pressed={isSelected ? 'true' : 'false'}
+                        aria-label={`Select garden ${g.name}, ${g.address || 'no address'}`}
                       >
                         <div className="d-flex justify-content-between align-items-start gap-2">
                           <div>
@@ -520,6 +522,7 @@ export default function HostDash() {
                       className="btn btn-outline-success btn-sm"
                       onClick={() => setShowEditForm(true)}
                       disabled={!selectedGarden.firebaseId}
+                      aria-label="Edit details for this garden"
                     >
                       Edit details
                     </button>
@@ -528,6 +531,7 @@ export default function HostDash() {
                       className="btn btn-outline-secondary btn-sm"
                       onClick={() => setShowTimeForm(true)}
                       disabled={!selectedGarden.firebaseId}
+                      aria-label="Add or manage volunteer and harvest times"
                     >
                       Manage times
                     </button>
@@ -535,6 +539,7 @@ export default function HostDash() {
                       type="button"
                       className="btn btn-outline-danger btn-sm"
                       onClick={handleDeleteSelected}
+                      aria-label="Delete this garden"
                     >
                       Delete
                     </button>

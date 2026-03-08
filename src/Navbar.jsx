@@ -44,11 +44,11 @@ export default function Navbar() {
   const avatarLetter = displayName?.[0]?.toUpperCase() ?? '?';
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark fixed-top w-100 py-3 bg-success bg-opacity-75">
+    <nav className="navbar navbar-expand-lg navbar-dark fixed-top w-100 py-3 bg-success bg-opacity-75" aria-label="Main navigation">
       <div className="container-fluid">
 
         <div className="d-flex flex-column">
-          <NavLink className="navbar-brand text-white bungee-regular fs-4 fw-bold mb-0" to="/">
+          <NavLink className="navbar-brand text-white bungee-regular fs-4 fw-bold mb-0" to="/" aria-label="Save the City - Home">
             Save the City
           </NavLink>
           <span className="small text-white">Seattle community gardens</span>
@@ -89,11 +89,14 @@ export default function Navbar() {
           <ul className="navbar-nav ms-2 align-items-center">
             {user ? (
               <li className="nav-item dropdown">
-                <a
+                <button
                   ref={dropdownRef}
-                  className="nav-link d-flex align-items-center gap-2 text-white fw-semibold"
-                  href="#"
-                  onClick={(e) => { e.preventDefault(); setDropdownOpen((prev) => !prev); }}
+                  type="button"
+                  className="nav-link d-flex align-items-center gap-2 text-white fw-semibold border-0 bg-transparent"
+                  onClick={() => setDropdownOpen((prev) => !prev)}
+                  aria-haspopup="true"
+                  aria-expanded={dropdownOpen}
+                  aria-label="Account menu"
                 >
                   <span
                     className="rounded-circle bg-white text-success d-flex align-items-center justify-content-center fw-bold fs-6"
@@ -102,9 +105,9 @@ export default function Navbar() {
                     {avatarLetter}
                   </span>
                   {displayName}
-                </a>
+                </button>
 
-                <ul className={`dropdown-menu dropdown-menu-end ${dropdownOpen ? 'show' : ''}`}>
+                <ul className={`dropdown-menu dropdown-menu-end ${dropdownOpen ? 'show' : ''}`} role="menu" aria-label="Account options">
                   <li>
                     <span className="dropdown-item-text small text-muted">{user.email}</span>
                   </li>
@@ -115,13 +118,13 @@ export default function Navbar() {
                   </li>
                   <li><hr className="dropdown-divider" /></li>
                   <li>
-                    <button className="dropdown-item" onClick={handleToggleView}>
+                    <button className="dropdown-item" onClick={handleToggleView} role="menuitem" aria-label={`Switch to ${role === 'volunteer' ? 'Host' : 'Volunteer'} view`}>
                       ⇄ Switch to {role === 'volunteer' ? 'Host' : 'Volunteer'} View
                     </button>
                   </li>
                   <li><hr className="dropdown-divider" /></li>
                   <li>
-                    <button className="dropdown-item text-danger" onClick={handleSignOut}>
+                    <button className="dropdown-item text-danger" onClick={handleSignOut} role="menuitem" aria-label="Sign out">
                       Sign Out
                     </button>
                   </li>

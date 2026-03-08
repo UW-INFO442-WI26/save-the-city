@@ -39,28 +39,38 @@ export default function LoginScreen() {
     };
 
       return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
-      <div className="card shadow p-4 border" style={{ width: '100%', maxWidth: 420 }}>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light" role="main" aria-label="Sign in or create account">
+      <div className="card shadow p-4 border" style={{ width: '100%', maxWidth: 420 }} role="region" aria-labelledby="login-heading">
 
         {/* Branding */}
         <div className="text-center mb-4">
-          <div className="fs-1">🌿</div>
-          <h1 className="text-success bungee-regular fs-3 mb-0">Save the City</h1>
+          <div className="fs-1" aria-hidden="true">🌿</div>
+          <h1 id="login-heading" className="text-success bungee-regular fs-3 mb-0">Save the City</h1>
           <p className="text-muted small text-uppercase">Seattle Community Gardens</p>
         </div>
 
         {/* Tabs */}
-        <ul className="nav nav-pills nav-fill mb-4">
-        <li className="nav-item">
+        <ul className="nav nav-pills nav-fill mb-4" role="tablist" aria-label="Sign in or create account">
+        <li className="nav-item" role="presentation">
             <button
+            type="button"
+            role="tab"
+            aria-selected={mode === 'login'}
+            aria-controls="login-panel"
+            id="tab-login"
             className={`nav-link ${mode === 'login' ? 'active' : 'text-secondary'}`}
             onClick={() => { setMode('login'); setError(''); }}
             >
             Sign In
             </button>
         </li>
-        <li className="nav-item">
+        <li className="nav-item" role="presentation">
             <button
+            type="button"
+            role="tab"
+            aria-selected={mode === 'register'}
+            aria-controls="login-panel"
+            id="tab-register"
             className={`nav-link ${mode === 'register' ? 'active' : 'text-secondary'}`}
             onClick={() => { setMode('register'); setError(''); }}
             >
@@ -70,7 +80,7 @@ export default function LoginScreen() {
         </ul>
 
         {/* Form */}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} id="login-panel" role="tabpanel" aria-labelledby={mode === 'login' ? 'tab-login' : 'tab-register'}>
           <div className="mb-3">
             <label htmlFor="email" className="form-label text-success small fw-bold text-uppercase">Email</label>
             <input
@@ -113,7 +123,7 @@ export default function LoginScreen() {
         </div>
 
         {/* Google */}
-        <button className="btn btn-outline-secondary w-100" onClick={handleGoogle} disabled={loading}>
+        <button type="button" className="btn btn-outline-secondary w-100" onClick={handleGoogle} disabled={loading} aria-label="Sign in with Google">
           Continue with Google
         </button>
 

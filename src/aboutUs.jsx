@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function AboutUs() {
   return (
-    <div className="about-us page-content">
+    <div className="about-us page-content" role="region" aria-label="About Save the City">
       <div className="container py-5">
         <h1 className="about-us__title mb-4">About Us</h1>
         <p className="about-us__lead text-dark">
@@ -25,6 +25,25 @@ export default function AboutUs() {
         </section>
 
         <section className="about-us__section mt-4">
+          <h2 className="about-us__heading text-dark">See community gardens in action</h2>
+          <p className="about-us__body text-dark mb-2">
+            Short clip: people helping in a community garden—planting, tending, and caring for plants together.
+          </p>
+          <div className="about-us__video-wrap mb-4">
+            <video
+              controls
+              width="100%"
+              style={{ maxWidth: 560, borderRadius: 8 }}
+              title="People helping in a community garden"
+              aria-label="Video of people taking care of a garden together"
+            >
+              <source src="https://assets.mixkit.co/videos/6763/6763-720.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </section>
+
+        <section className="about-us__section mt-4">
           <h2 className="about-us__heading text-dark">How We Do It</h2>
           <p className="about-us__body text-dark">
             Our platform supports <span className="text-success fw-semibold">UN Sustainable Development Goal 11: Sustainable Cities and Communities</span>. We help garden hosts list their spaces, post volunteer and harvest times, and reach neighbors who want to participate. Volunteers and community members can find gardens on a map, filter by what matters to them, and sign up for shifts—making it easy to grow, share, and eat local.
@@ -37,8 +56,8 @@ export default function AboutUs() {
             Whether you run a community garden or want to volunteer and harvest, you’re in the right place. Join us and help Save the City.
           </p>
           <div className="d-flex flex-wrap gap-3">
-            <Link to="/host" className="btn btn-success">Host a garden</Link>
-            <Link to="/user" className="btn btn-outline-success">Find gardens & volunteer</Link>
+            <Link to="/host" className="btn btn-success" aria-label="Go to Host Portal to register a garden">Host a garden</Link>
+            <Link to="/user" className="btn btn-outline-success" aria-label="Go to User Portal to find gardens and volunteer">Find gardens & volunteer</Link>
           </div>
         </section>
       </div>

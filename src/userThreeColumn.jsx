@@ -55,7 +55,12 @@ export default function ThreeColumn({ selectedGarden, onClose, eventType }) {
       />
 
       {/* Modal panel */}
-      <div style={{
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="garden-modal-title"
+        aria-describedby="garden-modal-desc"
+        style={{
         position: 'fixed',
         top: '50%', left: '50%',
         transform: 'translate(-50%, -50%)',
@@ -82,7 +87,7 @@ export default function ThreeColumn({ selectedGarden, onClose, eventType }) {
 
         {/* Garden name header */}
         <h4 style={{ marginTop: 0, marginBottom: 4 }}>{selectedGarden.name}</h4>
-        <p style={{ color: '#666', marginBottom: 20 }}>
+        <p id="garden-modal-desc" style={{ color: '#666', marginBottom: 20 }}>
           {selectedGarden.address} · {selectedGarden.tags?.join(', ')}
         </p>
 
