@@ -10,6 +10,7 @@ import Home from './home';
 import AboutUs from './aboutUs';
 import Navbar from './Navbar';
 import RoleSelector from './Roleselector';
+import Footer from './footer';
 
 function PrivateRoute({ children, requiredRole }) {
   const { user, role, roleLoading } = useAuth();
@@ -46,27 +47,30 @@ function AppRoutes() {
     <div>
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <Navbar />
+
       <main id="main-content" role="main">
-      <Routes>
-        <Route
-          path="/login"
-          element={user ? <Navigate to={getDefaultRoute()} replace /> : <LoginScreen />}
-        />
-        <Route path="/home" element={<Home />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route
-          path="/host"
-          element={
-            <PrivateRoute requiredRole="host">
-              <HostDash />
-            </PrivateRoute>
-          }
-        />
-        <Route path="/user" element={<UserDash />} />
-        <Route path="/" element={<Navigate to={getDefaultRoute()} replace />} />
-        <Route path="*" element={<Navigate to={getDefaultRoute()} replace />} />
-      </Routes>
+        <Routes>
+          <Route
+            path="/login"
+            element={user ? <Navigate to={getDefaultRoute()} replace /> : <LoginScreen />}
+          />
+          <Route path="/home" element={<Home />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route
+            path="/host"
+            element={
+              <PrivateRoute requiredRole="host">
+                <HostDash />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/user" element={<UserDash />} />
+          <Route path="/" element={<Navigate to={getDefaultRoute()} replace />} />
+          <Route path="*" element={<Navigate to={getDefaultRoute()} replace />} />
+        </Routes>
       </main>
+
+      <Footer />
     </div>
   );
 }

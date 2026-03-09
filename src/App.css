@@ -85,3 +85,26 @@
   font-size: 1.1em;
   font-weight: 1000;
 }
+
+html, body, #root {
+  height: 100%;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+.footer {
+  width: 100%;
+  background: #f8f9fa;
+  text-align: center;
+  padding: 16px;
+  margin-top: 100px;
+  border-top: 1px solid #ddd;
+}

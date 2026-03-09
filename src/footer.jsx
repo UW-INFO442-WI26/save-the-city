@@ -1,9 +1,9 @@
 import React from 'react';
 
-/*export default function Footer () {
-    return (
-        /*<div className="footer">
-            <p className="footer-text">© 2026 Save the City. All rights reserved.</p>
-        </div>
-    );
-}*/
+export default function Footer() {
+  return (
+    <footer className="footer text-center mt-5 py-3">
+      <p className="mb-0">© 2026 Save the City</p>
+    </footer>
+  );
+}
