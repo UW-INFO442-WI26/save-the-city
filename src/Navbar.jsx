@@ -66,8 +66,8 @@ export default function Navbar() {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-          <ul className="navbar-nav align-items-center">
+        <div className="collapse navbar-collapse justify-content-end flex-lg-row flex-column align-items-lg-center align-items-start" id="navbarSupportedContent">
+          <ul className="navbar-nav align-items-lg-center align-items-start">
             <li className="nav-item">
               <NavLink className="nav-link text-white fw-semibold" to="/home">Home</NavLink>
             </li>
@@ -86,7 +86,7 @@ export default function Navbar() {
             )}
           </ul>
 
-          <ul className="navbar-nav ms-2 align-items-center">
+          <ul className="navbar-nav align-items-lg-center align-items-start">
             {user ? (
               <li className="nav-item dropdown">
                 <button
