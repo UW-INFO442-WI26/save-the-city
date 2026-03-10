@@ -11,7 +11,21 @@ import {
 import { ref, set, get } from "firebase/database";
 import { database } from "./firebase";
 
-const AuthContext = createContext();
+const AuthContext = createContext({
+
+  user: null,
+  role: null,
+  loading: true,
+  roleLoading: true,
+  loginWithEmail: () => {},
+  registerWithEmail: () => {},
+  loginWithGoogle: () => {},
+  logout: () => {},
+  saveRole: () => {},
+  openAccountMenu: false,
+  setOpenAccountMenu: () => {},
+
+});
 
 export function AuthProvider({ children }) {
   const auth = getAuth();
