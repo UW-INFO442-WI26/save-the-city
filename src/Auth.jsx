@@ -61,11 +61,36 @@ export function AuthProvider({ children }) {
   const loginWithEmail = (email, password) =>
     signInWithEmailAndPassword(auth, email, password);
 
-  const registerWithEmail = (email, password) =>
-    createUserWithEmailAndPassword(auth, email, password);
+const registerWithEmail = async (email, password) => {
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const newUser = userCredential.user;
 
-  const loginWithGoogle = () =>
-    signInWithPopup(auth, new GoogleAuthProvider());
+  await set(ref(database, `users/${newUser.uid}`), {
+    email: newUser.email,
+    createdAt: Date.now(),
+    role: null,
+  });
+
+  return userCredential;
+};
+
+
+  const loginWithGoogle = async () => {
+  const userCredential = await signInWithPopup(auth, new GoogleAuthProvider());
+  const newUser = userCredential.user;
+
+  const snapshot = await get(ref(database, `users/${newUser.uid}`));
+  if (!snapshot.exists()) {
+    await set(ref(database, `users/${newUser.uid}`), {
+      email: newUser.email,
+      displayName: newUser.displayName,
+      createdAt: Date.now(),
+      role: null,
+    });
+  }
+
+  return userCredential;
+};
 
   const logout = async () => {
     setRole(null);
