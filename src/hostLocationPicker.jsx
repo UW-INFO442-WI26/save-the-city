@@ -54,7 +54,7 @@ export default function HostLocationPicker({ onConfirm, onCancel, user}) {
         lat: pinLocation.lat,
         lng: pinLocation.lng,
       },
-      ownerUid: user?.uid,
+      uid: user?.uid,
       ...formData,
     };
 
