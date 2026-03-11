@@ -105,6 +105,17 @@ main {
   background: #f8f9fa;
   text-align: center;
   padding: 16px;
-  margin-top: 100px;
+  margin-top: 0;
   border-top: 1px solid #ddd;
+}
+
+.btn-white-outline {
+  border: 2px solid white !important;
+  color: white !important;
+  background: transparent;
+}
+
+.btn-white-outline:hover {
+  background: white !important;
+  color: #1f4a2e !important;
 }

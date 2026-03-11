@@ -128,7 +128,7 @@ export default function Home() {
         </section>
 
         <section
-          className="home-cta py-4 rounded-3 px-4 mb-5 d-flex flex-wrap align-items-center justify-content-between gap-3"
+          className="home-cta py-4 rounded-3 px-4 mb-0 d-flex flex-wrap align-items-center justify-content-between gap-3"
           style={{ background: '#1f4a2e' }}
         >
           <div>
@@ -137,11 +137,13 @@ export default function Home() {
           </div>
           <div className="d-flex flex-wrap gap-3">
             {role === 'volunteer' ? (
-              <button className="btn btn-outline-success btn-lg" onClick={() => setOpenAccountMenu(true)}>
+              <button className="btn btn-lg btn-white-outline" onClick={() => setOpenAccountMenu(true)}>
                 Host a garden
               </button>
             ) : (
-              <Link to="/host" className="btn btn-outline-success btn-lg">Host a garden</Link>
+              <Link to="/host" className="btn btn-lg btn-white-outline">
+                Host a garden
+              </Link>
             )}
             {role === 'host' ? (
                 <button className="btn btn-success btn-lg" onClick={() => setOpenAccountMenu(true)}>

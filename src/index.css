@@ -417,7 +417,6 @@ button:focus-visible {
    FOOTER
    ============================================ */
 .footer {
-  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -539,6 +538,20 @@ button:focus-visible {
 .home-cta__text {
   font-size: 1.6rem;
   color: #333;
+}
+
+.btn-white-outline {
+  border: 1px solid white !important;
+  color: white !important;
+  background: transparent;
+}
+
+.btn-white-outline:hover,
+.btn-white-outline:focus,
+a.btn-white-outline:hover {
+  background-color: #198754 !important;
+  color: white !important;
+  border-color: #198754 !important;
 }
 
 .home-list li {
